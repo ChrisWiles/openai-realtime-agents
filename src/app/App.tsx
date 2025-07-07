@@ -1,6 +1,7 @@
 'use client';
 import type { RealtimeAgent } from '@openai/agents/realtime';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
@@ -476,6 +477,12 @@ function App() {
           </div>
         </div>
         <div className="flex items-center">
+          <Link
+            href="/how-to-use"
+            className="mr-6 text-purple-600 hover:text-purple-800 transition-colors font-medium"
+          >
+            How to Use
+          </Link>
           <label className="flex items-center text-base gap-1 mr-2 font-medium">
             Scenario
           </label>
