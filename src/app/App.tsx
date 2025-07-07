@@ -1,32 +1,31 @@
-"use client";
-import React, { useEffect, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { v4 as uuidv4 } from "uuid";
-
-import Image from "next/image";
-
-// UI components
-import Transcript from "./components/Transcript";
-import Events from "./components/Events";
-import BottomToolbar from "./components/BottomToolbar";
-
-// Types
-import { SessionStatus } from "@/app/types";
+'use client';
 import type { RealtimeAgent } from '@openai/agents/realtime';
-
-// Context providers & hooks
-import { useTranscript } from "@/app/contexts/TranscriptContext";
-import { useEvent } from "@/app/contexts/EventContext";
-import { useRealtimeSession } from "./hooks/useRealtimeSession";
-import { createModerationGuardrail } from "@/app/agentConfigs/guardrails";
-
+import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
+import React, { useEffect, useRef, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 // Agent configs
-import { allAgentSets, defaultAgentSetKey } from "@/app/agentConfigs";
-import { customerServiceRetailScenario } from "@/app/agentConfigs/customerServiceRetail";
-import { chatSupervisorScenario } from "@/app/agentConfigs/chatSupervisor";
-import { customerServiceRetailCompanyName } from "@/app/agentConfigs/customerServiceRetail";
-import { chatSupervisorCompanyName } from "@/app/agentConfigs/chatSupervisor";
-import { simpleHandoffScenario } from "@/app/agentConfigs/simpleHandoff";
+import { allAgentSets, defaultAgentSetKey } from '@/app/agentConfigs';
+import {
+  chatSupervisorCompanyName,
+  chatSupervisorScenario,
+} from '@/app/agentConfigs/chatSupervisor';
+import {
+  customerServiceRetailCompanyName,
+  customerServiceRetailScenario,
+} from '@/app/agentConfigs/customerServiceRetail';
+import { createModerationGuardrail } from '@/app/agentConfigs/guardrails';
+import { simpleHandoffScenario } from '@/app/agentConfigs/simpleHandoff';
+import { useEvent } from '@/app/contexts/EventContext';
+// Context providers & hooks
+import { useTranscript } from '@/app/contexts/TranscriptContext';
+// Types
+import type { SessionStatus } from '@/app/types';
+import BottomToolbar from './components/BottomToolbar';
+import Events from './components/Events';
+// UI components
+import Transcript from './components/Transcript';
+import { useRealtimeSession } from './hooks/useRealtimeSession';
 
 // Map used by connect logic for scenarios defined via the SDK.
 const sdkScenarioMap: Record<string, RealtimeAgent[]> = {
@@ -35,8 +34,8 @@ const sdkScenarioMap: Record<string, RealtimeAgent[]> = {
   chatSupervisor: chatSupervisorScenario,
 };
 
-import useAudioDownload from "./hooks/useAudioDownload";
-import { useHandleSessionHistory } from "./hooks/useHandleSessionHistory";
+import useAudioDownload from './hooks/useAudioDownload';
+import { useHandleSessionHistory } from './hooks/useHandleSessionHistory';
 
 function App() {
   const searchParams = useSearchParams()!;
@@ -51,18 +50,15 @@ function App() {
   // hook (configured in `useRealtimeSession`) to set the preferred codec
   // before the offer/answer negotiation.
   // ---------------------------------------------------------------------
-  const urlCodec = searchParams.get("codec") || "opus";
+  const urlCodec = searchParams.get('codec') || 'opus';
 
-  // Agents SDK doesn't currently support codec selection so it is now forced 
-  // via global codecPatch at module load 
+  // Agents SDK doesn't currently support codec selection so it is now forced
+  // via global codecPatch at module load
 
-  const {
-    addTranscriptMessage,
-    addTranscriptBreadcrumb,
-  } = useTranscript();
+  const { addTranscriptMessage, addTranscriptBreadcrumb } = useTranscript();
   const { logClientEvent, logServerEvent } = useEvent();
 
-  const [selectedAgentName, setSelectedAgentName] = useState<string>("");
+  const [selectedAgentName, setSelectedAgentName] = useState<string>('');
   const [selectedAgentConfigSet, setSelectedAgentConfigSet] = useState<
     RealtimeAgent[] | null
   >(null);
@@ -87,27 +83,21 @@ function App() {
     }
   }, [sdkAudioElement]);
 
-  const {
-    connect,
-    disconnect,
-    sendUserText,
-    sendEvent,
-    interrupt,
-    mute,
-  } = useRealtimeSession({
-    onConnectionChange: (s) => setSessionStatus(s as SessionStatus),
-    onAgentHandoff: (agentName: string) => {
-      handoffTriggeredRef.current = true;
-      setSelectedAgentName(agentName);
-    },
-  });
+  const { connect, disconnect, sendUserText, sendEvent, interrupt, mute } =
+    useRealtimeSession({
+      onConnectionChange: (s) => setSessionStatus(s as SessionStatus),
+      onAgentHandoff: (agentName: string) => {
+        handoffTriggeredRef.current = true;
+        setSelectedAgentName(agentName);
+      },
+    });
 
   const [sessionStatus, setSessionStatus] =
-    useState<SessionStatus>("DISCONNECTED");
+    useState<SessionStatus>('DISCONNECTED');
 
   const [isEventsPaneExpanded, setIsEventsPaneExpanded] =
     useState<boolean>(true);
-  const [userText, setUserText] = useState<string>("");
+  const [userText, setUserText] = useState<string>('');
   const [isPTTActive, setIsPTTActive] = useState<boolean>(false);
   const [isPTTUserSpeaking, setIsPTTUserSpeaking] = useState<boolean>(false);
   const [isAudioPlaybackEnabled, setIsAudioPlaybackEnabled] = useState<boolean>(
@@ -115,14 +105,14 @@ function App() {
       if (typeof window === 'undefined') return true;
       const stored = localStorage.getItem('audioPlaybackEnabled');
       return stored ? stored === 'true' : true;
-    },
+    }
   );
 
   // Initialize the recording hook.
   const { startRecording, stopRecording, downloadRecording } =
     useAudioDownload();
 
-  const sendClientEvent = (eventObj: any, eventNameSuffix = "") => {
+  const sendClientEvent = (eventObj: any, eventNameSuffix = '') => {
     try {
       sendEvent(eventObj);
       logClientEvent(eventObj, eventNameSuffix);
@@ -134,31 +124,31 @@ function App() {
   useHandleSessionHistory();
 
   useEffect(() => {
-    let finalAgentConfig = searchParams.get("agentConfig");
+    let finalAgentConfig = searchParams.get('agentConfig');
     if (!finalAgentConfig || !allAgentSets[finalAgentConfig]) {
       finalAgentConfig = defaultAgentSetKey;
       const url = new URL(window.location.toString());
-      url.searchParams.set("agentConfig", finalAgentConfig);
+      url.searchParams.set('agentConfig', finalAgentConfig);
       window.location.replace(url.toString());
       return;
     }
 
     const agents = allAgentSets[finalAgentConfig];
-    const agentKeyToUse = agents[0]?.name || "";
+    const agentKeyToUse = agents[0]?.name || '';
 
     setSelectedAgentName(agentKeyToUse);
     setSelectedAgentConfigSet(agents);
   }, [searchParams]);
 
   useEffect(() => {
-    if (selectedAgentName && sessionStatus === "DISCONNECTED") {
+    if (selectedAgentName && sessionStatus === 'DISCONNECTED') {
       connectToRealtime();
     }
   }, [selectedAgentName]);
 
   useEffect(() => {
     if (
-      sessionStatus === "CONNECTED" &&
+      sessionStatus === 'CONNECTED' &&
       selectedAgentConfigSet &&
       selectedAgentName
     ) {
@@ -173,21 +163,21 @@ function App() {
   }, [selectedAgentConfigSet, selectedAgentName, sessionStatus]);
 
   useEffect(() => {
-    if (sessionStatus === "CONNECTED") {
+    if (sessionStatus === 'CONNECTED') {
       updateSession();
     }
   }, [isPTTActive]);
 
   const fetchEphemeralKey = async (): Promise<string | null> => {
-    logClientEvent({ url: "/session" }, "fetch_session_token_request");
-    const tokenResponse = await fetch("/api/session");
+    logClientEvent({ url: '/session' }, 'fetch_session_token_request');
+    const tokenResponse = await fetch('/api/session');
     const data = await tokenResponse.json();
-    logServerEvent(data, "fetch_session_token_response");
+    logServerEvent(data, 'fetch_session_token_response');
 
     if (!data.client_secret?.value) {
-      logClientEvent(data, "error.no_ephemeral_key");
-      console.error("No ephemeral key provided by the server");
-      setSessionStatus("DISCONNECTED");
+      logClientEvent(data, 'error.no_ephemeral_key');
+      console.error('No ephemeral key provided by the server');
+      setSessionStatus('DISCONNECTED');
       return null;
     }
 
@@ -195,10 +185,10 @@ function App() {
   };
 
   const connectToRealtime = async () => {
-    const agentSetKey = searchParams.get("agentConfig") || "default";
+    const agentSetKey = searchParams.get('agentConfig') || 'default';
     if (sdkScenarioMap[agentSetKey]) {
-      if (sessionStatus !== "DISCONNECTED") return;
-      setSessionStatus("CONNECTING");
+      if (sessionStatus !== 'DISCONNECTED') return;
+      setSessionStatus('CONNECTING');
 
       try {
         const EPHEMERAL_KEY = await fetchEphemeralKey();
@@ -206,15 +196,18 @@ function App() {
 
         // Ensure the selectedAgentName is first so that it becomes the root
         const reorderedAgents = [...sdkScenarioMap[agentSetKey]];
-        const idx = reorderedAgents.findIndex((a) => a.name === selectedAgentName);
+        const idx = reorderedAgents.findIndex(
+          (a) => a.name === selectedAgentName
+        );
         if (idx > 0) {
           const [agent] = reorderedAgents.splice(idx, 1);
           reorderedAgents.unshift(agent);
         }
 
-        const companyName = agentSetKey === 'customerServiceRetail'
-          ? customerServiceRetailCompanyName
-          : chatSupervisorCompanyName;
+        const companyName =
+          agentSetKey === 'customerServiceRetail'
+            ? customerServiceRetailCompanyName
+            : chatSupervisorCompanyName;
         const guardrail = createModerationGuardrail(companyName);
 
         await connect({
@@ -227,8 +220,8 @@ function App() {
           },
         });
       } catch (err) {
-        console.error("Error connecting via SDK:", err);
-        setSessionStatus("DISCONNECTED");
+        console.error('Error connecting via SDK:', err);
+        setSessionStatus('DISCONNECTED');
       }
       return;
     }
@@ -236,13 +229,13 @@ function App() {
 
   const disconnectFromRealtime = () => {
     disconnect();
-    setSessionStatus("DISCONNECTED");
+    setSessionStatus('DISCONNECTED');
     setIsPTTUserSpeaking(false);
   };
 
   const sendSimulatedUserMessage = (text: string) => {
     const id = uuidv4().slice(0, 32);
-    addTranscriptMessage(id, "user", text, true);
+    addTranscriptMessage(id, 'user', text, true);
 
     sendClientEvent({
       type: 'conversation.item.create',
@@ -253,7 +246,10 @@ function App() {
         content: [{ type: 'input_text', text }],
       },
     });
-    sendClientEvent({ type: 'response.create' }, '(simulated user text message)');
+    sendClientEvent(
+      { type: 'response.create' },
+      '(simulated user text message)'
+    );
   };
 
   const updateSession = (shouldTriggerResponse: boolean = false) => {
@@ -282,7 +278,7 @@ function App() {
       sendSimulatedUserMessage('hi');
     }
     return;
-  }
+  };
 
   const handleSendTextMessage = () => {
     if (!userText.trim()) return;
@@ -294,7 +290,7 @@ function App() {
       console.error('Failed to send via SDK', err);
     }
 
-    setUserText("");
+    setUserText('');
   };
 
   const handleTalkButtonDown = () => {
@@ -308,8 +304,7 @@ function App() {
   };
 
   const handleTalkButtonUp = () => {
-    if (sessionStatus !== 'CONNECTED' || !isPTTUserSpeaking)
-      return;
+    if (sessionStatus !== 'CONNECTED' || !isPTTUserSpeaking) return;
 
     setIsPTTUserSpeaking(false);
     sendClientEvent({ type: 'input_audio_buffer.commit' }, 'commit PTT');
@@ -317,9 +312,9 @@ function App() {
   };
 
   const onToggleConnection = () => {
-    if (sessionStatus === "CONNECTED" || sessionStatus === "CONNECTING") {
+    if (sessionStatus === 'CONNECTED' || sessionStatus === 'CONNECTING') {
       disconnectFromRealtime();
-      setSessionStatus("DISCONNECTED");
+      setSessionStatus('DISCONNECTED');
     } else {
       connectToRealtime();
     }
@@ -328,7 +323,7 @@ function App() {
   const handleAgentChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newAgentConfig = e.target.value;
     const url = new URL(window.location.toString());
-    url.searchParams.set("agentConfig", newAgentConfig);
+    url.searchParams.set('agentConfig', newAgentConfig);
     window.location.replace(url.toString());
   };
 
@@ -346,38 +341,38 @@ function App() {
   // Because we need a new connection, refresh the page when codec changes
   const handleCodecChange = (newCodec: string) => {
     const url = new URL(window.location.toString());
-    url.searchParams.set("codec", newCodec);
+    url.searchParams.set('codec', newCodec);
     window.location.replace(url.toString());
   };
 
   useEffect(() => {
-    const storedPushToTalkUI = localStorage.getItem("pushToTalkUI");
+    const storedPushToTalkUI = localStorage.getItem('pushToTalkUI');
     if (storedPushToTalkUI) {
-      setIsPTTActive(storedPushToTalkUI === "true");
+      setIsPTTActive(storedPushToTalkUI === 'true');
     }
-    const storedLogsExpanded = localStorage.getItem("logsExpanded");
+    const storedLogsExpanded = localStorage.getItem('logsExpanded');
     if (storedLogsExpanded) {
-      setIsEventsPaneExpanded(storedLogsExpanded === "true");
+      setIsEventsPaneExpanded(storedLogsExpanded === 'true');
     }
     const storedAudioPlaybackEnabled = localStorage.getItem(
-      "audioPlaybackEnabled"
+      'audioPlaybackEnabled'
     );
     if (storedAudioPlaybackEnabled) {
-      setIsAudioPlaybackEnabled(storedAudioPlaybackEnabled === "true");
+      setIsAudioPlaybackEnabled(storedAudioPlaybackEnabled === 'true');
     }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("pushToTalkUI", isPTTActive.toString());
+    localStorage.setItem('pushToTalkUI', isPTTActive.toString());
   }, [isPTTActive]);
 
   useEffect(() => {
-    localStorage.setItem("logsExpanded", isEventsPaneExpanded.toString());
+    localStorage.setItem('logsExpanded', isEventsPaneExpanded.toString());
   }, [isEventsPaneExpanded]);
 
   useEffect(() => {
     localStorage.setItem(
-      "audioPlaybackEnabled",
+      'audioPlaybackEnabled',
       isAudioPlaybackEnabled.toString()
     );
   }, [isAudioPlaybackEnabled]);
@@ -387,7 +382,7 @@ function App() {
       if (isAudioPlaybackEnabled) {
         audioElementRef.current.muted = false;
         audioElementRef.current.play().catch((err) => {
-          console.warn("Autoplay may be blocked by browser:", err);
+          console.warn('Autoplay may be blocked by browser:', err);
         });
       } else {
         // Mute and pause to avoid brief audio blips before pause takes effect.
@@ -397,7 +392,7 @@ function App() {
     }
 
     // Toggle server-side audio stream mute so bandwidth is saved when the
-    // user disables playback. 
+    // user disables playback.
     try {
       mute(!isAudioPlaybackEnabled);
     } catch (err) {
@@ -418,7 +413,7 @@ function App() {
   }, [sessionStatus, isAudioPlaybackEnabled]);
 
   useEffect(() => {
-    if (sessionStatus === "CONNECTED" && audioElementRef.current?.srcObject) {
+    if (sessionStatus === 'CONNECTED' && audioElementRef.current?.srcObject) {
       // The remote audio stream from the audio element.
       const remoteStream = audioElementRef.current.srcObject as MediaStream;
       startRecording(remoteStream);
@@ -430,16 +425,19 @@ function App() {
     };
   }, [sessionStatus]);
 
-  const agentSetKey = searchParams.get("agentConfig") || "default";
+  const agentSetKey = searchParams.get('agentConfig') || 'default';
 
   return (
-    <div className="text-base flex flex-col h-screen bg-gray-100 text-gray-800 relative">
-      <div className="p-5 text-lg font-semibold flex justify-between items-center">
+    <div className="text-base flex flex-col h-screen relative overflow-hidden">
+      <div className="absolute inset-0 gradient-primary opacity-20"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-400/10 via-pink-500/10 to-red-500/10"></div>
+
+      <div className="relative z-10 p-5 text-lg font-semibold flex justify-between items-center glass backdrop-blur-md border-b border-white/10">
         <div
-          className="flex items-center cursor-pointer"
+          className="flex items-center cursor-pointer group"
           onClick={() => window.location.reload()}
         >
-          <div>
+          <div className="transform transition-transform group-hover:scale-110">
             <Image
               src="/openai-logomark.svg"
               alt="OpenAI Logo"
@@ -448,8 +446,9 @@ function App() {
               className="mr-2"
             />
           </div>
-          <div>
-            Realtime API <span className="text-gray-500">Agents</span>
+          <div className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            Realtime API{' '}
+            <span className="text-gray-600 dark:text-gray-400">Agents</span>
           </div>
         </div>
         <div className="flex items-center">
@@ -460,15 +459,19 @@ function App() {
             <select
               value={agentSetKey}
               onChange={handleAgentChange}
-              className="appearance-none border border-gray-300 rounded-lg text-base px-2 py-1 pr-8 cursor-pointer font-normal focus:outline-none"
+              className="appearance-none glass border border-white/20 rounded-lg text-base px-3 py-1.5 pr-8 cursor-pointer font-normal focus:outline-none focus:border-purple-400/50 transition-all hover:bg-white/10"
             >
               {Object.keys(allAgentSets).map((agentKey) => (
-                <option key={agentKey} value={agentKey}>
+                <option
+                  key={agentKey}
+                  value={agentKey}
+                  className="bg-gray-900 text-white"
+                >
                   {agentKey}
                 </option>
               ))}
             </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-gray-600">
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-purple-600">
               <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                 <path
                   fillRule="evenodd"
@@ -488,15 +491,19 @@ function App() {
                 <select
                   value={selectedAgentName}
                   onChange={handleSelectedAgentChange}
-                  className="appearance-none border border-gray-300 rounded-lg text-base px-2 py-1 pr-8 cursor-pointer font-normal focus:outline-none"
+                  className="appearance-none glass border border-white/20 rounded-lg text-base px-3 py-1.5 pr-8 cursor-pointer font-normal focus:outline-none focus:border-purple-400/50 transition-all hover:bg-white/10"
                 >
                   {selectedAgentConfigSet?.map((agent) => (
-                    <option key={agent.name} value={agent.name}>
+                    <option
+                      key={agent.name}
+                      value={agent.name}
+                      className="bg-gray-900 text-white"
+                    >
                       {agent.name}
                     </option>
                   ))}
                 </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-gray-600">
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-purple-600">
                   <svg
                     className="h-4 w-4"
                     viewBox="0 0 20 20"
@@ -515,15 +522,13 @@ function App() {
         </div>
       </div>
 
-      <div className="flex flex-1 gap-2 px-2 overflow-hidden relative">
+      <div className="flex flex-1 gap-4 p-4 overflow-hidden relative z-10">
         <Transcript
           userText={userText}
           setUserText={setUserText}
           onSendMessage={handleSendTextMessage}
           downloadRecording={downloadRecording}
-          canSend={
-            sessionStatus === "CONNECTED"
-          }
+          canSend={sessionStatus === 'CONNECTED'}
         />
 
         <Events isExpanded={isEventsPaneExpanded} />

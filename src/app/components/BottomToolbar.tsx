@@ -1,5 +1,5 @@
-import React from "react";
-import { SessionStatus } from "@/app/types";
+import type React from 'react';
+import type { SessionStatus } from '@/app/types';
 
 interface BottomToolbarProps {
   sessionStatus: SessionStatus;
@@ -32,8 +32,8 @@ function BottomToolbar({
   codec,
   onCodecChange,
 }: BottomToolbarProps) {
-  const isConnected = sessionStatus === "CONNECTED";
-  const isConnecting = sessionStatus === "CONNECTING";
+  const isConnected = sessionStatus === 'CONNECTED';
+  const isConnecting = sessionStatus === 'CONNECTING';
 
   const handleCodecChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newCodec = e.target.value;
@@ -41,26 +41,28 @@ function BottomToolbar({
   };
 
   function getConnectionButtonLabel() {
-    if (isConnected) return "Disconnect";
-    if (isConnecting) return "Connecting...";
-    return "Connect";
+    if (isConnected) return 'Disconnect';
+    if (isConnecting) return 'Connecting...';
+    return 'Connect';
   }
 
   function getConnectionButtonClasses() {
-    const baseClasses = "text-white text-base p-2 w-36 rounded-md h-full";
-    const cursorClass = isConnecting ? "cursor-not-allowed" : "cursor-pointer";
+    const baseClasses =
+      'text-white text-base px-6 py-2.5 w-36 rounded-xl h-full transition-all transform hover:scale-105 shadow-lg font-medium';
+    const cursorClass = isConnecting ? 'cursor-not-allowed' : 'cursor-pointer';
 
     if (isConnected) {
-      // Connected -> label "Disconnect" -> red
-      return `bg-red-600 hover:bg-red-700 ${cursorClass} ${baseClasses}`;
+      // Connected -> label "Disconnect" -> red gradient
+      return `gradient-secondary ${cursorClass} ${baseClasses}`;
     }
-    // Disconnected or connecting -> label is either "Connect" or "Connecting" -> black
-    return `bg-black hover:bg-gray-900 ${cursorClass} ${baseClasses}`;
+    // Disconnected or connecting -> label is either "Connect" or "Connecting" -> primary gradient
+    return `gradient-primary ${cursorClass} ${baseClasses}`;
   }
 
   return (
-    <div className="p-4 flex flex-row items-center justify-center gap-x-8">
+    <div className="relative z-10 p-4 flex flex-row items-center justify-center gap-x-8 glass backdrop-blur-md border-t border-white/10">
       <button
+        type="button"
         onClick={onToggleConnection}
         className={getConnectionButtonClasses()}
         disabled={isConnecting}
@@ -68,49 +70,52 @@ function BottomToolbar({
         {getConnectionButtonLabel()}
       </button>
 
-      <div className="flex flex-row items-center gap-2">
+      <div className="flex flex-row items-center gap-3">
         <input
           id="push-to-talk"
           type="checkbox"
           checked={isPTTActive}
           onChange={(e) => setIsPTTActive(e.target.checked)}
           disabled={!isConnected}
-          className="w-4 h-4"
+          className="w-4 h-4 accent-purple-600"
         />
         <label
           htmlFor="push-to-talk"
-          className="flex items-center cursor-pointer"
+          className="flex items-center cursor-pointer text-gray-700 hover:text-purple-600 transition-colors"
         >
           Push to talk
         </label>
         <button
+          type="button"
           onMouseDown={handleTalkButtonDown}
           onMouseUp={handleTalkButtonUp}
           onTouchStart={handleTalkButtonDown}
           onTouchEnd={handleTalkButtonUp}
           disabled={!isPTTActive}
           className={
-            (isPTTUserSpeaking ? "bg-gray-300" : "bg-gray-200") +
-            " py-1 px-4 cursor-pointer rounded-md" +
-            (!isPTTActive ? " bg-gray-100 text-gray-400" : "")
+            (isPTTUserSpeaking
+              ? 'gradient-accent'
+              : 'glass border border-white/20') +
+            ' py-2 px-6 cursor-pointer rounded-xl transition-all transform hover:scale-105 shadow-md text-white font-medium' +
+            (!isPTTActive ? ' opacity-50 cursor-not-allowed' : '')
           }
         >
           Talk
         </button>
       </div>
 
-      <div className="flex flex-row items-center gap-1">
+      <div className="flex flex-row items-center gap-2">
         <input
           id="audio-playback"
           type="checkbox"
           checked={isAudioPlaybackEnabled}
           onChange={(e) => setIsAudioPlaybackEnabled(e.target.checked)}
           disabled={!isConnected}
-          className="w-4 h-4"
+          className="w-4 h-4 accent-purple-600"
         />
         <label
           htmlFor="audio-playback"
-          className="flex items-center cursor-pointer"
+          className="flex items-center cursor-pointer text-gray-700 hover:text-purple-600 transition-colors"
         >
           Audio playback
         </label>
@@ -122,15 +127,18 @@ function BottomToolbar({
           type="checkbox"
           checked={isEventsPaneExpanded}
           onChange={(e) => setIsEventsPaneExpanded(e.target.checked)}
-          className="w-4 h-4"
+          className="w-4 h-4 accent-purple-600"
         />
-        <label htmlFor="logs" className="flex items-center cursor-pointer">
+        <label
+          htmlFor="logs"
+          className="flex items-center cursor-pointer text-gray-700 hover:text-purple-600 transition-colors"
+        >
           Logs
         </label>
       </div>
 
       <div className="flex flex-row items-center gap-2">
-        <div>Codec:</div>
+        <div className="text-gray-700">Codec:</div>
         {/*
           Codec selector – Lets you force the WebRTC track to use 8 kHz 
           PCMU/PCMA so you can preview how the agent will sound 
@@ -143,11 +151,17 @@ function BottomToolbar({
           id="codec-select"
           value={codec}
           onChange={handleCodecChange}
-          className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none cursor-pointer"
+          className="glass border border-white/20 rounded-lg px-3 py-1.5 focus:outline-none cursor-pointer hover:bg-white/10 transition-all text-gray-700"
         >
-          <option value="opus">Opus (48 kHz)</option>
-          <option value="pcmu">PCMU (8 kHz)</option>
-          <option value="pcma">PCMA (8 kHz)</option>
+          <option value="opus" className="bg-gray-900 text-white">
+            Opus (48 kHz)
+          </option>
+          <option value="pcmu" className="bg-gray-900 text-white">
+            PCMU (8 kHz)
+          </option>
+          <option value="pcma" className="bg-gray-900 text-white">
+            PCMA (8 kHz)
+          </option>
         </select>
       </div>
     </div>

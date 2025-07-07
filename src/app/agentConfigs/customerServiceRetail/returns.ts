@@ -1,4 +1,8 @@
-import { RealtimeAgent, tool, RealtimeItem } from '@openai/agents/realtime';
+import {
+  RealtimeAgent,
+  type RealtimeItem,
+  tool,
+} from '@openai/agents/realtime';
 
 export const returnsAgent = new RealtimeAgent({
   name: 'returns',
@@ -88,8 +92,7 @@ Speak at a medium pace—steady and clear. Brief pauses can be used for emphasis
         required: ['phoneNumber'],
         additionalProperties: false,
       },
-      execute: async (input: any) => {
-        const { phoneNumber } = input as { phoneNumber: string };
+      execute: async (_input: any) => {
         return {
           orders: [
             {
@@ -144,7 +147,7 @@ Speak at a medium pace—steady and clear. Brief pauses can be used for emphasis
     tool({
       name: 'retrievePolicy',
       description:
-        "Retrieve and present the store’s policies, including eligibility for returns. Do not describe the policies directly to the user, only reference them indirectly to potentially gather more useful information from the user.",
+        'Retrieve and present the store’s policies, including eligibility for returns. Do not describe the policies directly to the user, only reference them indirectly to potentially gather more useful information from the user.',
       parameters: {
         type: 'object',
         properties: {
@@ -154,13 +157,14 @@ Speak at a medium pace—steady and clear. Brief pauses can be used for emphasis
           },
           itemCategory: {
             type: 'string',
-            description: 'The category of the item the user wants to return (e.g., shoes, accessories).',
+            description:
+              'The category of the item the user wants to return (e.g., shoes, accessories).',
           },
         },
         required: ['region', 'itemCategory'],
         additionalProperties: false,
       },
-      execute: async (input: any) => {
+      execute: async (_input: any) => {
         return {
           policy: `
 At Snowy Peak Boards, we believe in transparent and customer-friendly policies to ensure you have a hassle-free experience. Below are our detailed guidelines:
@@ -216,11 +220,12 @@ We hope these policies give you confidence in our commitment to quality and cust
         properties: {
           userDesiredAction: {
             type: 'string',
-            description: "The proposed action the user wishes to be taken.",
+            description: 'The proposed action the user wishes to be taken.',
           },
           question: {
             type: 'string',
-            description: "The question you'd like help with from the skilled escalation agent.",
+            description:
+              "The question you'd like help with from the skilled escalation agent.",
           },
         },
         required: ['userDesiredAction', 'question'],
@@ -232,16 +237,17 @@ We hope these policies give you confidence in our commitment to quality and cust
           question: string;
         };
         const nMostRecentLogs = 10;
-        const history: RealtimeItem[] = (details?.context as any)?.history ?? [];
+        const history: RealtimeItem[] =
+          (details?.context as any)?.history ?? [];
         const filteredLogs = history.filter((log) => log.type === 'message');
         const messages = [
           {
-            role: "system",
+            role: 'system',
             content:
               "You are an an expert at assessing the potential eligibility of cases based on how well the case adheres to the provided guidelines. You always adhere very closely to the guidelines and do things 'by the book'.",
           },
           {
-            role: "user",
+            role: 'user',
             content: `Carefully consider the context provided, which includes the request and relevant policies and facts, and determine whether the user's desired action can be completed according to the policies. Provide a concise explanation or justification. Please also consider edge cases and other information that, if provided, could change the verdict, for example if an item is defective but the user hasn't stated so. Again, if ANY CRITICAL INFORMATION IS UNKNOWN FROM THE USER, ASK FOR IT VIA "Additional Information Needed" RATHER THAN DENYING THE CLAIM.
 
 <modelContext>
@@ -274,26 +280,27 @@ true/false/need_more_information
 `,
           },
         ];
-        const model = "o4-mini";
+        const model = 'o4-mini';
         console.log(`checking order eligibility with model=${model}`);
 
-        const response = await fetch("/api/responses", {
-          method: "POST",
+        const response = await fetch('/api/responses', {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({ model, input: messages }),
         });
 
         if (!response.ok) {
-          console.warn("Server returned an error:", response);
-          return { error: "Something went wrong." };
+          console.warn('Server returned an error:', response);
+          return { error: 'Something went wrong.' };
         }
 
         const { output = [] } = await response.json();
-        const text = output
-          .find((i: any) => i.type === 'message' && i.role === 'assistant')
-          ?.content?.find((c: any) => c.type === 'output_text')?.text ?? '';
+        const text =
+          output
+            .find((i: any) => i.type === 'message' && i.role === 'assistant')
+            ?.content?.find((c: any) => c.type === 'output_text')?.text ?? '';
 
         console.log(text || output);
         return { result: text || output };

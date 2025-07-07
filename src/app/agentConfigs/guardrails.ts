@@ -1,13 +1,13 @@
 import { zodTextFormat } from 'openai/helpers/zod';
-import { GuardrailOutputZod, GuardrailOutput } from '@/app/types';
+import { type GuardrailOutput, GuardrailOutputZod } from '@/app/types';
 
 // Validator that calls the /api/responses endpoint to
-// validates the realtime output according to moderation policies. 
+// validates the realtime output according to moderation policies.
 // This will prevent the realtime model from responding in undesired ways
 // By sending it a corrective message and having it redirect the conversation.
 export async function runGuardrailClassifier(
   message: string,
-  companyName: string = 'newTelco',
+  companyName: string = 'newTelco'
 ): Promise<GuardrailOutput> {
   const messages = [
     {
@@ -60,7 +60,10 @@ export async function runGuardrailClassifier(
       testText: message,
     };
   } catch (error) {
-    console.error('Error parsing the message content as GuardrailOutput:', error);
+    console.error(
+      'Error parsing the message content as GuardrailOutput:',
+      error
+    );
     return Promise.reject('Failed to parse guardrail output.');
   }
 }
@@ -76,12 +79,14 @@ export interface RealtimeOutputGuardrailArgs {
   context?: any;
 }
 
-// Creates a guardrail bound to a specific company name for output moderation purposes. 
+// Creates a guardrail bound to a specific company name for output moderation purposes.
 export function createModerationGuardrail(companyName: string) {
   return {
     name: 'moderation_guardrail',
 
-    async execute({ agentOutput }: RealtimeOutputGuardrailArgs): Promise<RealtimeOutputGuardrailResult> {
+    async execute({
+      agentOutput,
+    }: RealtimeOutputGuardrailArgs): Promise<RealtimeOutputGuardrailResult> {
       try {
         const res = await runGuardrailClassifier(agentOutput, companyName);
         const triggered = res.moderationCategory !== 'NONE';

@@ -1,11 +1,11 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 // Define the allowed moderation categories only once
 export const MODERATION_CATEGORIES = [
-  "OFFENSIVE",
-  "OFF_BRAND",
-  "VIOLENCE",
-  "NONE",
+  'OFFENSIVE',
+  'OFF_BRAND',
+  'VIOLENCE',
+  'NONE',
 ] as const;
 
 // Derive the union type for ModerationCategory from the array
@@ -14,7 +14,7 @@ export type ModerationCategory = (typeof MODERATION_CATEGORIES)[number];
 // Create a Zod enum based on the same array
 export const ModerationCategoryZod = z.enum([...MODERATION_CATEGORIES]);
 
-export type SessionStatus = "DISCONNECTED" | "CONNECTING" | "CONNECTED";
+export type SessionStatus = 'DISCONNECTED' | 'CONNECTING' | 'CONNECTED';
 
 export interface ToolParameterProperty {
   type: string;
@@ -35,7 +35,7 @@ export interface ToolParameters {
 }
 
 export interface Tool {
-  type: "function";
+  type: 'function';
   name: string;
   description: string;
   parameters: ToolParameters;
@@ -48,7 +48,11 @@ export interface AgentConfig {
   tools: Tool[];
   toolLogic?: Record<
     string,
-    (args: any, transcriptLogsFiltered: TranscriptItem[], addTranscriptBreadcrumb?: (title: string, data?: any) => void) => Promise<any> | any
+    (
+      args: any,
+      transcriptLogsFiltered: TranscriptItem[],
+      addTranscriptBreadcrumb?: (title: string, data?: any) => void
+    ) => Promise<any> | any
   >;
   // addTranscriptBreadcrumb is a param in case we want to add additional breadcrumbs, e.g. for nested tool calls from a supervisor agent.
   downstreamAgents?:
@@ -59,22 +63,22 @@ export interface AgentConfig {
 export type AllAgentConfigsType = Record<string, AgentConfig[]>;
 
 export interface GuardrailResultType {
-  status: "IN_PROGRESS" | "DONE";
-  testText?: string; 
+  status: 'IN_PROGRESS' | 'DONE';
+  testText?: string;
   category?: ModerationCategory;
   rationale?: string;
 }
 
 export interface TranscriptItem {
   itemId: string;
-  type: "MESSAGE" | "BREADCRUMB";
-  role?: "user" | "assistant";
+  type: 'MESSAGE' | 'BREADCRUMB';
+  role?: 'user' | 'assistant';
   title?: string;
   data?: Record<string, any>;
   expanded: boolean;
   timestamp: string;
   createdAtMs: number;
-  status: "IN_PROGRESS" | "DONE";
+  status: 'IN_PROGRESS' | 'DONE';
   isHidden: boolean;
   guardrailResult?: GuardrailResultType;
 }
@@ -105,7 +109,7 @@ export interface ServerEvent {
     status?: string;
     name?: string;
     arguments?: string;
-    role?: "user" | "assistant";
+    role?: 'user' | 'assistant';
     content?: {
       type?: string;
       transcript?: string | null;
@@ -131,7 +135,7 @@ export interface ServerEvent {
 
 export interface LoggedEvent {
   id: number;
-  direction: "client" | "server";
+  direction: 'client' | 'server';
   expanded: boolean;
   timestamp: string;
   eventName: string;

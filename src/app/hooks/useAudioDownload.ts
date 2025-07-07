@@ -1,5 +1,5 @@
-import { useRef } from "react";
-import { convertWebMBlobToWav } from "../lib/audioUtils";
+import { useRef } from 'react';
+import { convertWebMBlobToWav } from '../lib/audioUtils';
 
 function useAudioDownload() {
   // Ref to store the MediaRecorder instance.
@@ -17,7 +17,7 @@ function useAudioDownload() {
     try {
       micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
     } catch (err) {
-      console.error("Error getting microphone stream:", err);
+      console.error('Error getting microphone stream:', err);
       // Fallback to an empty MediaStream if microphone access fails.
       micStream = new MediaStream();
     }
@@ -31,7 +31,10 @@ function useAudioDownload() {
       const remoteSource = audioContext.createMediaStreamSource(remoteStream);
       remoteSource.connect(destination);
     } catch (err) {
-      console.error("Error connecting remote stream to the audio context:", err);
+      console.error(
+        'Error connecting remote stream to the audio context:',
+        err
+      );
     }
 
     // Connect the microphone audio stream.
@@ -39,10 +42,13 @@ function useAudioDownload() {
       const micSource = audioContext.createMediaStreamSource(micStream);
       micSource.connect(destination);
     } catch (err) {
-      console.error("Error connecting microphone stream to the audio context:", err);
+      console.error(
+        'Error connecting microphone stream to the audio context:',
+        err
+      );
     }
 
-    const options = { mimeType: "audio/webm" };
+    const options = { mimeType: 'audio/webm' };
     try {
       const mediaRecorder = new MediaRecorder(destination.stream, options);
       mediaRecorder.ondataavailable = (event: BlobEvent) => {
@@ -54,7 +60,7 @@ function useAudioDownload() {
       mediaRecorder.start();
       mediaRecorderRef.current = mediaRecorder;
     } catch (err) {
-      console.error("Error starting MediaRecorder with combined stream:", err);
+      console.error('Error starting MediaRecorder with combined stream:', err);
     }
   };
 
@@ -76,7 +82,10 @@ function useAudioDownload() {
    */
   const downloadRecording = async () => {
     // If recording is still active, request the latest chunk.
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
+    if (
+      mediaRecorderRef.current &&
+      mediaRecorderRef.current.state === 'recording'
+    ) {
       // Request the current data.
       mediaRecorderRef.current.requestData();
       // Allow a short delay for ondataavailable to fire.
@@ -84,12 +93,14 @@ function useAudioDownload() {
     }
 
     if (recordedChunksRef.current.length === 0) {
-      console.warn("No recorded chunks found to download.");
+      console.warn('No recorded chunks found to download.');
       return;
     }
-    
+
     // Combine the recorded chunks into a single WebM blob.
-    const webmBlob = new Blob(recordedChunksRef.current, { type: "audio/webm" });
+    const webmBlob = new Blob(recordedChunksRef.current, {
+      type: 'audio/webm',
+    });
 
     try {
       // Convert the WebM blob into a WAV blob.
@@ -97,11 +108,11 @@ function useAudioDownload() {
       const url = URL.createObjectURL(wavBlob);
 
       // Generate a formatted datetime string (replace characters not allowed in filenames).
-      const now = new Date().toISOString().replace(/[:.]/g, "-");
+      const now = new Date().toISOString().replace(/[:.]/g, '-');
 
       // Create an invisible anchor element and trigger the download.
-      const a = document.createElement("a");
-      a.style.display = "none";
+      const a = document.createElement('a');
+      a.style.display = 'none';
       a.href = url;
       a.download = `realtime_agents_audio_${now}.wav`;
       document.body.appendChild(a);
@@ -111,11 +122,11 @@ function useAudioDownload() {
       // Clean up the blob URL after a short delay.
       setTimeout(() => URL.revokeObjectURL(url), 100);
     } catch (err) {
-      console.error("Error converting recording to WAV:", err);
+      console.error('Error converting recording to WAV:', err);
     }
   };
 
   return { startRecording, stopRecording, downloadRecording };
 }
 
-export default useAudioDownload; 
+export default useAudioDownload;

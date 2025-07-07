@@ -1,5 +1,4 @@
-import { RealtimeItem, tool } from '@openai/agents/realtime';
-
+import { type RealtimeItem, tool } from '@openai/agents/realtime';
 
 import {
   exampleAccountInfo,
@@ -93,55 +92,55 @@ I'm sorry, but I'm not able to process payments over the phone. Would you like m
 
 export const supervisorAgentTools = [
   {
-    type: "function",
-    name: "lookupPolicyDocument",
+    type: 'function',
+    name: 'lookupPolicyDocument',
     description:
-      "Tool to look up internal documents and policies by topic or keyword.",
+      'Tool to look up internal documents and policies by topic or keyword.',
     parameters: {
-      type: "object",
+      type: 'object',
       properties: {
         topic: {
-          type: "string",
+          type: 'string',
           description:
-            "The topic or keyword to search for in company policies or documents.",
+            'The topic or keyword to search for in company policies or documents.',
         },
       },
-      required: ["topic"],
+      required: ['topic'],
       additionalProperties: false,
     },
   },
   {
-    type: "function",
-    name: "getUserAccountInfo",
+    type: 'function',
+    name: 'getUserAccountInfo',
     description:
       "Tool to get user account information. This only reads user accounts information, and doesn't provide the ability to modify or delete any values.",
     parameters: {
-      type: "object",
+      type: 'object',
       properties: {
         phone_number: {
-          type: "string",
+          type: 'string',
           description:
             "Formatted as '(xxx) xxx-xxxx'. MUST be provided by the user, never a null or empty string.",
         },
       },
-      required: ["phone_number"],
+      required: ['phone_number'],
       additionalProperties: false,
     },
   },
   {
-    type: "function",
-    name: "findNearestStore",
+    type: 'function',
+    name: 'findNearestStore',
     description:
-      "Tool to find the nearest store location to a customer, given their zip code.",
+      'Tool to find the nearest store location to a customer, given their zip code.',
     parameters: {
-      type: "object",
+      type: 'object',
       properties: {
         zip_code: {
-          type: "string",
+          type: 'string',
           description: "The customer's 5-digit zip code.",
         },
       },
-      required: ["zip_code"],
+      required: ['zip_code'],
       additionalProperties: false,
     },
   },
@@ -168,11 +167,11 @@ async function fetchResponsesMessage(body: any) {
 
 function getToolResponse(fName: string) {
   switch (fName) {
-    case "getUserAccountInfo":
+    case 'getUserAccountInfo':
       return exampleAccountInfo;
-    case "lookupPolicyDocument":
+    case 'lookupPolicyDocument':
       return examplePolicyDocs;
-    case "findNearestStore":
+    case 'findNearestStore':
       return exampleStoreLocations;
     default:
       return { result: true };
@@ -186,7 +185,7 @@ function getToolResponse(fName: string) {
 async function handleToolCalls(
   body: any,
   response: any,
-  addBreadcrumb?: (title: string, data?: any) => void,
+  addBreadcrumb?: (title: string, data?: any) => void
 ) {
   let currentResponse = response;
 
@@ -198,11 +197,15 @@ async function handleToolCalls(
     const outputItems: any[] = currentResponse.output ?? [];
 
     // Gather all function calls in the output.
-    const functionCalls = outputItems.filter((item) => item.type === 'function_call');
+    const functionCalls = outputItems.filter(
+      (item) => item.type === 'function_call'
+    );
 
     if (functionCalls.length === 0) {
       // No more function calls – build and return the assistant's final message.
-      const assistantMessages = outputItems.filter((item) => item.type === 'message');
+      const assistantMessages = outputItems.filter(
+        (item) => item.type === 'message'
+      );
 
       const finalText = assistantMessages
         .map((msg: any) => {
@@ -229,7 +232,10 @@ async function handleToolCalls(
         addBreadcrumb(`[supervisorAgent] function call: ${fName}`, args);
       }
       if (addBreadcrumb) {
-        addBreadcrumb(`[supervisorAgent] function call result: ${fName}`, toolRes);
+        addBreadcrumb(
+          `[supervisorAgent] function call result: ${fName}`,
+          toolRes
+        );
       }
 
       // Add function call and result to the request body to send back to realtime
@@ -244,7 +250,7 @@ async function handleToolCalls(
           type: 'function_call_output',
           call_id: toolCall.call_id,
           output: JSON.stringify(toolRes),
-        },
+        }
       );
     }
 
@@ -263,7 +269,7 @@ export const getNextResponseFromSupervisor = tool({
       relevantContextFromLastUserMessage: {
         type: 'string',
         description:
-          'Key information from the user described in their most recent message. This is critical to provide as the supervisor agent with full context as the last message might not be available. Okay to omit if the user message didn\'t add any new information.',
+          "Key information from the user described in their most recent message. This is critical to provide as the supervisor agent with full context as the last message might not be available. Okay to omit if the user message didn't add any new information.",
       },
     },
     required: ['relevantContextFromLastUserMessage'],
@@ -316,4 +322,3 @@ export const getNextResponseFromSupervisor = tool({
     return { nextResponse: finalText as string };
   },
 });
-  
