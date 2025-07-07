@@ -4,8 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
-- **Development**: `npm run dev` - Start the development server at http://localhost:3000
+- **Development**: `npm run dev` - Start the development server with Turbopack at http://localhost:3000
+- **Development (Debug)**: `npm run dev:inspect` - Start development server with Node.js inspector for debugging
+- **Development (Alt Port)**: `npm run dev:port` - Start development server on port 3001
 - **Build**: `npm run build` - Build the production version
+- **Build (Analyze)**: `npm run build:analyze` - Build with bundle analyzer enabled
 - **Start**: `npm run start` - Start the production server
 - **Lint**: `npm run lint` - Run Biome to check and fix code style/formatting
 - **Biome Check**: `npm run biome:check` - Check code without auto-fixing
