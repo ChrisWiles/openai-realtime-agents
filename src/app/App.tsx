@@ -6,7 +6,11 @@ import { useSearchParams } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 // Agent configs
-import { allAgentSets, defaultAgentSetKey } from '@/app/agentConfigs';
+import {
+  allAgentSets,
+  defaultAgentSetKey,
+  scenarioConfigs,
+} from '@/app/agentConfigs';
 import {
   chatSupervisorCompanyName,
   chatSupervisorScenario,
@@ -16,6 +20,10 @@ import {
   customerServiceRetailScenario,
 } from '@/app/agentConfigs/customerServiceRetail';
 import { createModerationGuardrail } from '@/app/agentConfigs/guardrails';
+import {
+  intelligentMaterialOrderingCompanyName,
+  intelligentMaterialOrderingScenario,
+} from '@/app/agentConfigs/intelligentMaterialOrdering';
 import { simpleHandoffScenario } from '@/app/agentConfigs/simpleHandoff';
 import { useEvent } from '@/app/contexts/EventContext';
 // Context providers & hooks
@@ -33,6 +41,7 @@ const sdkScenarioMap: Record<string, RealtimeAgent[]> = {
   simpleHandoff: simpleHandoffScenario,
   customerServiceRetail: customerServiceRetailScenario,
   chatSupervisor: chatSupervisorScenario,
+  intelligentMaterialOrdering: intelligentMaterialOrderingScenario,
 };
 
 import useAudioDownload from './hooks/useAudioDownload';
@@ -214,7 +223,9 @@ function App() {
         const companyName =
           agentSetKey === 'customerServiceRetail'
             ? customerServiceRetailCompanyName
-            : chatSupervisorCompanyName;
+            : agentSetKey === 'intelligentMaterialOrdering'
+              ? intelligentMaterialOrderingCompanyName
+              : chatSupervisorCompanyName;
         const guardrail = createModerationGuardrail(companyName);
 
         await connect({
@@ -483,33 +494,44 @@ function App() {
           >
             How to Use
           </Link>
-          <label className="flex items-center text-base gap-1 mr-2 font-medium">
-            Scenario
-          </label>
-          <div className="relative inline-block">
-            <select
-              value={agentSetKey}
-              onChange={handleAgentChange}
-              className="appearance-none glass border border-white/20 rounded-lg text-base px-3 py-1.5 pr-8 cursor-pointer font-normal focus:outline-none focus:border-purple-400/50 transition-all hover:bg-white/10"
-            >
-              {Object.keys(allAgentSets).map((agentKey) => (
-                <option
-                  key={agentKey}
-                  value={agentKey}
-                  className="bg-gray-900 text-white"
+          <div className="flex flex-col">
+            <label className="flex items-center text-base gap-1 mr-2 font-medium mb-1">
+              Scenario
+            </label>
+            <div className="relative inline-block">
+              <select
+                value={agentSetKey}
+                onChange={handleAgentChange}
+                className="appearance-none glass border border-white/20 rounded-lg text-base px-3 py-1.5 pr-8 cursor-pointer font-normal focus:outline-none focus:border-purple-400/50 transition-all hover:bg-white/10 min-w-[280px]"
+              >
+                {scenarioConfigs.map((scenario) => (
+                  <option
+                    key={scenario.key}
+                    value={scenario.key}
+                    className="bg-gray-900 text-white"
+                    title={scenario.description}
+                  >
+                    {scenario.title}
+                  </option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-purple-600">
+                <svg
+                  className="h-4 w-4"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
                 >
-                  {agentKey}
-                </option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-purple-600">
-              <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                <path
-                  fillRule="evenodd"
-                  d="M5.23 7.21a.75.75 0 011.06.02L10 10.44l3.71-3.21a.75.75 0 111.04 1.08l-4.25 3.65a.75.75 0 01-1.04 0L5.21 8.27a.75.75 0 01.02-1.06z"
-                  clipRule="evenodd"
-                />
-              </svg>
+                  <path
+                    fillRule="evenodd"
+                    d="M5.23 7.21a.75.75 0 011.06.02L10 10.44l3.71-3.21a.75.75 0 111.04 1.08l-4.25 3.65a.75.75 0 01-1.04 0L5.21 8.27a.75.75 0 01.02-1.06z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div className="text-xs text-gray-600 mt-1 max-w-[280px]">
+              {scenarioConfigs.find((s) => s.key === agentSetKey)
+                ?.description || ''}
             </div>
           </div>
 
