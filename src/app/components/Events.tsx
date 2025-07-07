@@ -41,7 +41,7 @@ function Events({ isExpanded }: EventsProps) {
     >
       {isExpanded && (
         <div>
-          <div className="flex items-center justify-between px-6 py-4 sticky top-0 z-10 text-base border-b border-white/10 glass backdrop-blur-md">
+          <div className="flex items-center justify-between px-6 py-4 sticky top-0 z-10 text-base glass backdrop-blur-md border-b border-white/10">
             <span className="font-semibold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
               Logs
             </span>

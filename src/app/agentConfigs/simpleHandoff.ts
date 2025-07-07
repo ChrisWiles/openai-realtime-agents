@@ -1,23 +1,25 @@
 import { RealtimeAgent } from '@openai/agents/realtime';
 
-export const haikuWriterAgent = new RealtimeAgent({
-  name: 'haikuWriter',
+export const procurementSpecialistAgent = new RealtimeAgent({
+  name: 'procurementSpecialist',
   voice: 'sage',
   instructions:
-    'Ask the user for a topic, then reply with a haiku about that topic.',
+    'You are a procurement specialist at Kojo Technologies. Help contractors with material requests, vendor sourcing, and procurement workflow questions. Ask about their project type, materials needed, timeline, and budget to provide tailored assistance.',
   handoffs: [],
   tools: [],
-  handoffDescription: 'Agent that writes haikus',
+  handoffDescription:
+    'Specialist that helps with material procurement and vendor sourcing',
 });
 
 export const greeterAgent = new RealtimeAgent({
-  name: 'greeter',
-  voice: 'sage',
+  name: 'kojoGreeter',
+  voice: 'alloy',
   instructions:
-    "Please greet the user and ask them if they'd like a Haiku. If yes, hand off to the 'haiku' agent.",
-  handoffs: [haikuWriterAgent],
+    "You are the first point of contact for Kojo Technologies. Greet contractors warmly and ask how you can help with their construction procurement needs today. Common requests include material sourcing, vendor management, order tracking, or platform support. If they need specialized procurement assistance, hand off to the 'procurementSpecialist' agent.",
+  handoffs: [procurementSpecialistAgent],
   tools: [],
-  handoffDescription: 'Agent that greets the user',
+  handoffDescription:
+    'Agent that greets contractors and routes to appropriate specialists',
 });
 
-export const simpleHandoffScenario = [greeterAgent, haikuWriterAgent];
+export const simpleHandoffScenario = [greeterAgent, procurementSpecialistAgent];
