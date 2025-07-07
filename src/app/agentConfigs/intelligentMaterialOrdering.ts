@@ -4,7 +4,7 @@ import { RealtimeAgent, tool } from '@openai/agents/realtime';
 const MATERIAL_CATALOG = {
   pvc_pipe: {
     name: 'PVC Pipe',
-    required_fields: ['diameter', 'length', 'pressure_rating'],
+    required_fields: ['diameter', 'length', 'quantity', 'pressure_rating'],
     optional_fields: ['color', 'fitting_type'],
     validation_rules: {
       diameter: {
@@ -21,26 +21,27 @@ const MATERIAL_CATALOG = {
           '6"',
           '8"',
         ],
-        message:
-          'Please specify the pipe diameter (e.g., 1/2", 3/4", 1", 2", 4", etc.)',
+        message: 'Diameter? (1/2", 3/4", 1", 2", 4")',
       },
       length: {
-        type: 'number_with_unit',
-        units: ['ft', 'feet', 'foot', 'm', 'meter', 'meters'],
-        message:
-          'Please specify the total length needed (e.g., "10 feet", "5 meters")',
+        type: 'enum',
+        values: ['10ft', '20ft'],
+        message: 'Length? (10ft or 20ft)',
+      },
+      quantity: {
+        type: 'number',
+        message: 'How many pieces?',
       },
       pressure_rating: {
         type: 'enum',
         values: ['Schedule 40', 'Schedule 80', 'DWV', 'Class 200', 'Class 315'],
-        message:
-          'What pressure rating do you need? (Schedule 40, Schedule 80, DWV, etc.)',
+        message: 'Pressure rating? (Schedule 40, 80, DWV)',
       },
     },
   },
   copper_pipe: {
     name: 'Copper Pipe',
-    required_fields: ['diameter', 'length', 'type'],
+    required_fields: ['diameter', 'length', 'quantity', 'type'],
     optional_fields: ['temper'],
     validation_rules: {
       diameter: {
@@ -59,25 +60,33 @@ const MATERIAL_CATALOG = {
           '1.625"',
           '2.125"',
         ],
-        message:
-          'Please specify the copper pipe diameter (e.g., 1/2", 3/4", 1")',
+        message: 'Diameter? (1/2", 3/4", 1")',
       },
       length: {
-        type: 'number_with_unit',
-        units: ['ft', 'feet', 'foot', 'm', 'meter', 'meters'],
-        message:
-          'Please specify the total length needed (e.g., "20 feet", "6 meters")',
+        type: 'enum',
+        values: ['10ft', '20ft'],
+        message: 'Length? (10ft or 20ft)',
+      },
+      quantity: {
+        type: 'number',
+        message: 'How many pieces?',
       },
       type: {
         type: 'enum',
         values: ['Type K', 'Type L', 'Type M', 'DWV'],
-        message: 'What type of copper pipe? (Type K, Type L, Type M, or DWV)',
+        message: 'Type? (K, L, M, DWV)',
       },
     },
   },
   electrical_wire: {
     name: 'Electrical Wire',
-    required_fields: ['gauge', 'length', 'conductor_count', 'insulation_type'],
+    required_fields: [
+      'gauge',
+      'length',
+      'quantity',
+      'conductor_count',
+      'insulation_type',
+    ],
     optional_fields: ['color', 'stranding'],
     validation_rules: {
       gauge: {
@@ -94,12 +103,16 @@ const MATERIAL_CATALOG = {
           '1/0 AWG',
           '2/0 AWG',
         ],
-        message: 'What wire gauge do you need? (e.g., 12 AWG, 14 AWG, 10 AWG)',
+        message: 'Gauge? (12, 14, 10 AWG)',
       },
       length: {
-        type: 'number_with_unit',
-        units: ['ft', 'feet', 'foot', 'm', 'meter', 'meters'],
-        message: 'How much wire do you need? (e.g., "100 feet", "50 meters")',
+        type: 'enum',
+        values: ['250ft', '500ft', '1000ft', 'custom'],
+        message: 'Length per roll? (250ft, 500ft, 1000ft)',
+      },
+      quantity: {
+        type: 'number',
+        message: 'How many rolls?',
       },
       conductor_count: {
         type: 'enum',
@@ -109,19 +122,18 @@ const MATERIAL_CATALOG = {
           '4-conductor',
           'single conductor',
         ],
-        message:
-          'How many conductors? (single, 2-conductor, 3-conductor, etc.)',
+        message: 'Conductors? (single, 2, 3, 4)',
       },
       insulation_type: {
         type: 'enum',
         values: ['THHN', 'THWN', 'NM-B', 'UF-B', 'XHHW', 'USE-2'],
-        message: 'What insulation type? (THHN, THWN, NM-B, UF-B, etc.)',
+        message: 'Insulation? (THHN, THWN, NM-B)',
       },
     },
   },
   lumber: {
     name: 'Lumber',
-    required_fields: ['dimensions', 'length', 'grade', 'species'],
+    required_fields: ['dimensions', 'length', 'quantity', 'grade', 'species'],
     optional_fields: ['treatment', 'moisture_content'],
     validation_rules: {
       dimensions: {
@@ -140,13 +152,16 @@ const MATERIAL_CATALOG = {
           '4x4',
           '6x6',
         ],
-        message: 'What dimensions do you need? (e.g., 2x4, 2x6, 2x8, 4x4)',
+        message: 'Size? (2x4, 2x6, 2x8)',
       },
       length: {
-        type: 'number_with_unit',
-        units: ['ft', 'feet', 'foot', 'm', 'meter', 'meters'],
-        message:
-          'What length pieces do you need? (e.g., "8 feet", "10 feet", "12 feet")',
+        type: 'enum',
+        values: ['8ft', '10ft', '12ft', '14ft', '16ft', '20ft'],
+        message: 'Length? (8ft, 10ft, 12ft, 16ft)',
+      },
+      quantity: {
+        type: 'number',
+        message: 'How many pieces?',
       },
       grade: {
         type: 'enum',
@@ -159,8 +174,7 @@ const MATERIAL_CATALOG = {
           'No. 1',
           'No. 2',
         ],
-        message:
-          'What grade lumber? (Construction, Standard, Stud, Select Structural, etc.)',
+        message: 'Grade? (Construction, Stud, Standard)',
       },
       species: {
         type: 'enum',
@@ -173,8 +187,7 @@ const MATERIAL_CATALOG = {
           'Redwood',
           'Pressure Treated',
         ],
-        message:
-          'What wood species? (Douglas Fir, Southern Pine, Cedar, Pressure Treated, etc.)',
+        message: 'Species? (Doug Fir, PT, Cedar)',
       },
     },
   },
@@ -243,15 +256,37 @@ You are Kojo's material ordering assistant. Be concise and efficient.
 - Use short sentences
 - Get to the point
 
+# Important Rules
+- Pipes and lumber come in standard lengths (10ft, 20ft)
+- Always ask for QUANTITY (number of pieces), not total length
+- If user says "100 ft of pipe", clarify: "How many 10ft pieces?"
+- Standard pipe length is 10ft unless specified
+
 # Example Responses
-User: "I need 10 feet of PVC pipe"
-You: "What diameter? (1/2", 3/4", 1", 2", 4")"
+User: "I need 10 ft of 2" Schedule 80 PVC"
+You: "One 10ft piece of 2" Schedule 80 PVC?"
+
+User: "No, I need 200 feet total"
+You: "Length? (10ft or 20ft)"
+
+User: "10ft"
+You: "20 pieces of 10ft 2" Schedule 80 PVC. Add to cart?"
+
+Another example:
+User: "I need PVC pipe"
+You: "Diameter? (1/2", 3/4", 1", 2", 4")"
 
 User: "2 inch"
-You: "Pressure rating? (Schedule 40, 80, or DWV)"
+You: "Length? (10ft or 20ft)"
+
+User: "10ft"
+You: "How many pieces?"
+
+User: "5"
+You: "Pressure rating? (Schedule 40, 80, DWV)"
 
 User: "Schedule 40"
-You: "10 ft of 2" Schedule 40 PVC. Add to cart?"
+You: "5 pieces of 10ft 2" Schedule 40 PVC. Add to cart?"
 
 IMPORTANT: Keep responses under 20 words when possible. Be helpful but extremely concise.
 `,
@@ -314,12 +349,26 @@ IMPORTANT: Keep responses under 20 words when possible. Be helpful but extremely
             detected_specs.dimensions = dimensionMatch[1];
           }
 
-          // Extract length/quantity patterns
+          // Extract length patterns
           const lengthMatch = request_lower.match(
             /(\d+(?:\.\d+)?)\s*(feet|foot|ft|meters?|m)\s*(of)?/
           );
           if (lengthMatch) {
-            detected_specs.length = `${lengthMatch[1]} ${lengthMatch[2]}`;
+            detected_specs.length = `${lengthMatch[1]}ft`;
+          }
+
+          // Extract quantity patterns
+          const quantityMatch = request_lower.match(
+            /(\d+)\s*(pieces?|sticks?|rolls?|boards?)(?:\s+of)?/
+          );
+          if (quantityMatch) {
+            detected_specs.quantity = parseInt(quantityMatch[1]);
+          } else {
+            // Check for simple number at start
+            const simpleQtyMatch = request_lower.match(/^(\d+)\s+/);
+            if (simpleQtyMatch) {
+              detected_specs.quantity = parseInt(simpleQtyMatch[1]);
+            }
           }
 
           // Extract diameter for pipes
