@@ -108,6 +108,12 @@ function App() {
     }
   );
 
+  const [voice, setVoice] = useState<string>(() => {
+    if (typeof window === 'undefined') return 'alloy';
+    const stored = localStorage.getItem('voice');
+    return stored || 'alloy';
+  });
+
   // Initialize the recording hook.
   const { startRecording, stopRecording, downloadRecording } =
     useAudioDownload();
@@ -218,6 +224,7 @@ function App() {
           extraContext: {
             addTranscriptBreadcrumb,
           },
+          voice: voice,
         });
       } catch (err) {
         console.error('Error connecting via SDK:', err);
@@ -345,6 +352,19 @@ function App() {
     window.location.replace(url.toString());
   };
 
+  const handleVoiceChange = (newVoice: string) => {
+    setVoice(newVoice);
+    localStorage.setItem('voice', newVoice);
+    // Reconnect with new voice if currently connected
+    if (sessionStatus === 'CONNECTED') {
+      disconnectFromRealtime();
+      // Connection will be re-established by useEffect watching selectedAgentName
+      setTimeout(() => {
+        connectToRealtime();
+      }, 100);
+    }
+  };
+
   useEffect(() => {
     const storedPushToTalkUI = localStorage.getItem('pushToTalkUI');
     if (storedPushToTalkUI) {
@@ -359,6 +379,10 @@ function App() {
     );
     if (storedAudioPlaybackEnabled) {
       setIsAudioPlaybackEnabled(storedAudioPlaybackEnabled === 'true');
+    }
+    const storedVoice = localStorage.getItem('voice');
+    if (storedVoice) {
+      setVoice(storedVoice);
     }
   }, []);
 
@@ -548,6 +572,8 @@ function App() {
         setIsAudioPlaybackEnabled={setIsAudioPlaybackEnabled}
         codec={urlCodec}
         onCodecChange={handleCodecChange}
+        voice={voice}
+        onVoiceChange={handleVoiceChange}
       />
     </div>
   );

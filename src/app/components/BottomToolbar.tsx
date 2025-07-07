@@ -15,6 +15,8 @@ interface BottomToolbarProps {
   setIsAudioPlaybackEnabled: (val: boolean) => void;
   codec: string;
   onCodecChange: (newCodec: string) => void;
+  voice: string;
+  onVoiceChange: (newVoice: string) => void;
 }
 
 function BottomToolbar({
@@ -31,6 +33,8 @@ function BottomToolbar({
   setIsAudioPlaybackEnabled,
   codec,
   onCodecChange,
+  voice,
+  onVoiceChange,
 }: BottomToolbarProps) {
   const isConnected = sessionStatus === 'CONNECTED';
   const isConnecting = sessionStatus === 'CONNECTING';
@@ -38,6 +42,11 @@ function BottomToolbar({
   const handleCodecChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newCodec = e.target.value;
     onCodecChange(newCodec);
+  };
+
+  const handleVoiceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newVoice = e.target.value;
+    onVoiceChange(newVoice);
   };
 
   function getConnectionButtonLabel() {
@@ -161,6 +170,42 @@ function BottomToolbar({
           </option>
           <option value="pcma" className="bg-gray-900 text-white">
             PCMA (8 kHz)
+          </option>
+        </select>
+      </div>
+
+      <div className="flex flex-row items-center gap-2">
+        <div className="text-gray-700">Voice:</div>
+        <select
+          id="voice-select"
+          value={voice}
+          onChange={handleVoiceChange}
+          disabled={isConnected}
+          className="glass border border-white/20 rounded-lg px-3 py-1.5 focus:outline-none cursor-pointer hover:bg-white/10 transition-all text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed min-w-[200px]"
+        >
+          <option value="alloy" className="bg-gray-900 text-white">
+            Alloy - Neutral, balanced & clear
+          </option>
+          <option value="echo" className="bg-gray-900 text-white">
+            Echo - Male, deep & calm
+          </option>
+          <option value="shimmer" className="bg-gray-900 text-white">
+            Shimmer - Female, crisp & pleasant
+          </option>
+          <option value="ash" className="bg-gray-900 text-white">
+            Ash - Male, confident & smooth
+          </option>
+          <option value="ballad" className="bg-gray-900 text-white">
+            Ballad - Male, warm & expressive
+          </option>
+          <option value="coral" className="bg-gray-900 text-white">
+            Coral - Female, warm & friendly
+          </option>
+          <option value="sage" className="bg-gray-900 text-white">
+            Sage - Female, calm & thoughtful
+          </option>
+          <option value="verse" className="bg-gray-900 text-white">
+            Verse - Male, British accent
           </option>
         </select>
       </div>
