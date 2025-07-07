@@ -167,7 +167,7 @@ Speak at a medium pace—steady and clear. Brief pauses can be used for emphasis
       execute: async (_input: any) => {
         return {
           policy: `
-At Snowy Peak Boards, we believe in transparent and customer-friendly policies to ensure you have a hassle-free experience. Below are our detailed guidelines:
+At Kojo Technologies, we believe in transparent and customer-friendly policies to ensure you have a hassle-free experience. Below are our detailed guidelines:
 
 1. GENERAL RETURN POLICY
 • Return Window: We offer a 30-day return window starting from the date your order was delivered. 
@@ -200,7 +200,7 @@ At Snowy Peak Boards, we believe in transparent and customer-friendly policies t
 • Extended Window: Returns beyond the 30-day window may be eligible for store credit at our discretion, but only if items remain in largely original, resalable condition. 
 • Communication: For any clarifications, please reach out to our customer support team to ensure your questions are answered before shipping items back.
 
-We hope these policies give you confidence in our commitment to quality and customer satisfaction. Thank you for choosing Snowy Peak Boards!
+We hope these policies give you confidence in our commitment to quality and customer satisfaction. Thank you for choosing Kojo Technologies!
 `,
         };
       },
