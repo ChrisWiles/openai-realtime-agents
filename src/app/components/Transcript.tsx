@@ -129,12 +129,12 @@ function Transcript({
                 const bubbleBase = `max-w-lg p-4 shadow-lg ${
                   isUser
                     ? 'gradient-primary text-white'
-                    : 'glass backdrop-blur-md text-gray-800 border border-white/20'
+                    : 'glass backdrop-blur-md text-gray-900 dark:text-gray-100 border border-white/20'
                 }`;
                 const isBracketedMessage =
                   title.startsWith('[') && title.endsWith(']');
                 const messageStyle = isBracketedMessage
-                  ? 'italic text-gray-400'
+                  ? 'italic text-gray-500 dark:text-gray-400'
                   : '';
                 const displayTitle = isBracketedMessage
                   ? title.slice(1, -1)
@@ -150,7 +150,9 @@ function Transcript({
                       >
                         <div
                           className={`text-xs ${
-                            isUser ? 'text-white/70' : 'text-gray-600'
+                            isUser
+                              ? 'text-white/70'
+                              : 'text-gray-700 dark:text-gray-400'
                           } font-mono`}
                         >
                           {timestamp}
@@ -177,7 +179,7 @@ function Transcript({
                       {timestamp}
                     </span>
                     <div
-                      className={`whitespace-pre-wrap flex items-center font-mono text-sm text-gray-700 ${
+                      className={`whitespace-pre-wrap flex items-center font-mono text-sm text-gray-800 dark:text-gray-300 ${
                         data
                           ? 'cursor-pointer hover:text-purple-600 transition-colors'
                           : ''
@@ -196,7 +198,7 @@ function Transcript({
                       {title}
                     </div>
                     {expanded && data && (
-                      <div className="text-gray-700 text-left mt-2">
+                      <div className="text-gray-800 dark:text-gray-300 text-left mt-2">
                         <pre className="border-l-2 ml-1 border-purple-300 whitespace-pre-wrap break-words font-mono text-xs mb-2 mt-2 pl-2 glass backdrop-blur-sm p-2 rounded">
                           {JSON.stringify(data, null, 2)}
                         </pre>
@@ -233,6 +235,7 @@ function Transcript({
           }}
           className="flex-1 px-4 py-3 focus:outline-none glass backdrop-blur-sm rounded-xl border border-white/20 focus:border-purple-400/50 transition-all placeholder-gray-500"
           placeholder="Type a message..."
+          style={{ color: 'var(--foreground)' }}
         />
         <button
           type="button"

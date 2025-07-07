@@ -74,19 +74,19 @@ function Events({ isExpanded }: EventsProps) {
                           'flex-1 text-sm ' +
                           (isError
                             ? 'text-red-500 font-semibold'
-                            : 'text-gray-700 group-hover:text-gray-900')
+                            : 'text-gray-800 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100')
                         }
                       >
                         {log.eventName}
                       </span>
                     </div>
-                    <div className="text-gray-600 ml-1 text-xs whitespace-nowrap">
+                    <div className="text-gray-700 dark:text-gray-400 ml-1 text-xs whitespace-nowrap">
                       {log.timestamp}
                     </div>
                   </div>
 
                   {log.expanded && log.eventData && (
-                    <div className="text-gray-700 text-left mt-3">
+                    <div className="text-gray-800 dark:text-gray-300 text-left mt-3">
                       <pre className="border-l-2 ml-1 border-blue-300 whitespace-pre-wrap break-words font-mono text-xs mb-2 mt-2 pl-3 glass backdrop-blur-sm p-3 rounded-lg">
                         {JSON.stringify(log.eventData, null, 2)}
                       </pre>
