@@ -1,7 +1,13 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
-// Proxy endpoint for the OpenAI Responses API
+/**
+ * Handles POST requests to the OpenAI Responses API.
+ * This acts as a proxy endpoint, forwarding requests to OpenAI and handling structured vs. text responses.
+ *
+ * @param req The NextRequest object containing the request body.
+ * @returns A NextResponse object containing the OpenAI response or an error message.
+ */
 export async function POST(req: NextRequest) {
   const body = await req.json();
 
@@ -14,6 +20,13 @@ export async function POST(req: NextRequest) {
   }
 }
 
+/**
+ * Handles structured responses from the OpenAI Responses API.
+ *
+ * @param openai The OpenAI client instance.
+ * @param body The request body for the structured response.
+ * @returns A NextResponse object containing the structured response or an error message.
+ */
 async function structuredResponse(openai: OpenAI, body: any) {
   try {
     const response = await openai.responses.parse({
@@ -28,6 +41,13 @@ async function structuredResponse(openai: OpenAI, body: any) {
   }
 }
 
+/**
+ * Handles text responses from the OpenAI Responses API.
+ *
+ * @param openai The OpenAI client instance.
+ * @param body The request body for the text response.
+ * @returns A NextResponse object containing the text response or an error message.
+ */
 async function textResponse(openai: OpenAI, body: any) {
   try {
     const response = await openai.responses.create({

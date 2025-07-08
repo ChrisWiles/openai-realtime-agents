@@ -5,15 +5,23 @@ import { intelligentMaterialOrderingScenario } from './intelligentMaterialOrderi
 import { materialOrderingScenario } from './materialOrdering';
 import { simpleHandoffScenario } from './simpleHandoff';
 
-// Scenario configuration with metadata
+/**
+ * Defines the configuration for a single agent scenario.
+ */
 export interface ScenarioConfig {
+  /** A unique key for the scenario. */
   key: string;
+  /** The title of the scenario, displayed in the UI. */
   title: string;
+  /** A brief description of what the scenario demonstrates. */
   description: string;
+  /** An array of RealtimeAgent instances participating in this scenario. */
   agents: RealtimeAgent[];
 }
 
-// Available scenarios with descriptions
+/**
+ * An array of all available agent scenario configurations.
+ */
 export const scenarioConfigs: ScenarioConfig[] = [
   {
     key: 'chatSupervisor',
@@ -50,7 +58,10 @@ export const scenarioConfigs: ScenarioConfig[] = [
   },
 ];
 
-// Map of scenario key -> array of RealtimeAgent objects (for backwards compatibility)
+/**
+ * A map of scenario keys to arrays of RealtimeAgent objects.
+ * This is primarily for backwards compatibility.
+ */
 export const allAgentSets: Record<string, RealtimeAgent[]> = {
   simpleHandoff: simpleHandoffScenario,
   customerServiceRetail: customerServiceRetailScenario,
@@ -59,4 +70,7 @@ export const allAgentSets: Record<string, RealtimeAgent[]> = {
   intelligentMaterialOrdering: intelligentMaterialOrderingScenario,
 };
 
+/**
+ * The key of the default agent set to be loaded when the application starts.
+ */
 export const defaultAgentSetKey = 'chatSupervisor';

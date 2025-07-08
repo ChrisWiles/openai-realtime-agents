@@ -1,6 +1,10 @@
 import { RealtimeAgent, tool } from '@openai/agents/realtime';
 
-// Material ordering agent with comprehensive validation
+/**
+ * Represents Kojo's material ordering specialist agent.
+ * This agent is designed to be brief and efficient, handling material validation, availability checks,
+ * delivery information, and order submission.
+ */
 export const materialOrderingAgent = new RealtimeAgent({
   name: 'materialOrdering',
   voice: 'ballad',
@@ -38,6 +42,9 @@ You: "500ft 12AWG THHN. When needed?"
 Be concise. Get orders done fast.
 `,
   tools: [
+    /**
+     * Tool to validate a material order for completeness and accuracy.
+     */
     tool({
       name: 'validateMaterialOrder',
       description: 'Validate a material order for completeness and accuracy',
@@ -147,6 +154,9 @@ Be concise. Get orders done fast.
       },
     }),
 
+    /**
+     * Tool to check availability and pricing for materials across vendors.
+     */
     tool({
       name: 'checkMaterialAvailability',
       description:
@@ -219,6 +229,9 @@ Be concise. Get orders done fast.
       },
     }),
 
+    /**
+     * Tool to create a purchase order for validated materials.
+     */
     tool({
       name: 'createMaterialOrder',
       description: 'Create a purchase order for validated materials',
@@ -273,7 +286,10 @@ Be concise. Get orders done fast.
     'Specialist for material ordering with comprehensive validation and vendor management',
 });
 
-// Emergency procurement agent for urgent orders
+/**
+ * Represents an emergency procurement specialist agent for Kojo Technologies.
+ * This agent handles urgent material needs when job sites are down or contractors need immediate materials.
+ */
 export const emergencyProcurementAgent = new RealtimeAgent({
   name: 'emergencyProcurement',
   voice: 'ash',
@@ -303,6 +319,9 @@ Sample: "URGENT: I need a 100 amp breaker, job site is down!"
 Response: "I'll find that immediately. What's your location? What brand panel is this for? I'll have options in 2 minutes."
 `,
   tools: [
+    /**
+     * Tool to find vendors with immediate availability for emergency orders.
+     */
     tool({
       name: 'emergencyVendorSearch',
       description:
@@ -356,6 +375,9 @@ Response: "I'll find that immediately. What's your location? What brand panel is
     'Emergency procurement for urgent material needs and job site emergencies',
 });
 
+/**
+ * Defines the material ordering scenario, including the material ordering agent and the emergency procurement agent.
+ */
 export const materialOrderingScenario = [
   materialOrderingAgent,
   emergencyProcurementAgent,

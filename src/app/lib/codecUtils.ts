@@ -1,3 +1,10 @@
+/**
+ * Determines the appropriate audio format string based on the given codec.
+ * This function is intended for use in a browser environment.
+ *
+ * @param codec The codec string (e.g., 'PCMU', 'PCMA'). Case-insensitive.
+ * @returns The corresponding audio format ('pcm16', 'g711_ulaw', or 'g711_alaw'). Defaults to 'pcm16'.
+ */
 export function audioFormatForCodec(
   codec: string
 ): 'pcm16' | 'g711_ulaw' | 'g711_alaw' {
@@ -10,7 +17,13 @@ export function audioFormatForCodec(
   return audioFormat;
 }
 
-// Apply preferred codec on a peer connection's audio transceivers. Safe to call multiple times.
+/**
+ * Applies preferred audio codec settings to a WebRTC Peer Connection's audio transceivers.
+ * This function can be called multiple times safely.
+ *
+ * @param pc The RTCPeerConnection object to configure.
+ * @param codec The preferred codec string (e.g., 'opus', 'pcmu', 'pcma'). Case-insensitive.
+ */
 export function applyCodecPreferences(
   pc: RTCPeerConnection,
   codec: string

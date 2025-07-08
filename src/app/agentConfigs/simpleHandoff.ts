@@ -1,5 +1,9 @@
 import { RealtimeAgent } from '@openai/agents/realtime';
 
+/**
+ * Represents a procurement specialist agent for Kojo Technologies.
+ * This agent helps contractors with material requests, vendor sourcing, and procurement workflow questions.
+ */
 export const procurementSpecialistAgent = new RealtimeAgent({
   name: 'procurementSpecialist',
   voice: 'sage',
@@ -11,6 +15,10 @@ export const procurementSpecialistAgent = new RealtimeAgent({
     'Specialist that helps with material procurement and vendor sourcing',
 });
 
+/**
+ * Represents the greeter agent for Kojo Technologies.
+ * This agent is the first point of contact, greets contractors, and routes them to appropriate specialists.
+ */
 export const greeterAgent = new RealtimeAgent({
   name: 'kojoGreeter',
   voice: 'alloy',
@@ -22,4 +30,7 @@ export const greeterAgent = new RealtimeAgent({
     'Agent that greets contractors and routes to appropriate specialists',
 });
 
+/**
+ * Defines the simple handoff scenario, including the greeter and procurement specialist agents.
+ */
 export const simpleHandoffScenario = [greeterAgent, procurementSpecialistAgent];

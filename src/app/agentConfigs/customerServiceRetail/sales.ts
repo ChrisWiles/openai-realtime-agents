@@ -1,5 +1,9 @@
 import { RealtimeAgent, tool } from '@openai/agents/realtime';
 
+/**
+ * Represents a sales assistant agent for customer service.
+ * This agent handles sales-related inquiries, provides product recommendations, and assists with purchase flows.
+ */
 export const salesAgent = new RealtimeAgent({
   name: 'salesAgent',
   voice: 'sage',
@@ -10,6 +14,10 @@ export const salesAgent = new RealtimeAgent({
     'You are a helpful sales assistant. Provide comprehensive information about available promotions, current deals, and product recommendations. Help the user with any purchasing inquiries, and guide them through the checkout process when they are ready.',
 
   tools: [
+    /**
+     * Tool to check for current promotions, discounts, or special deals.
+     * Responds with available offers relevant to the user’s query.
+     */
     tool({
       name: 'lookupNewSales',
       description:
@@ -106,6 +114,9 @@ export const salesAgent = new RealtimeAgent({
       },
     }),
 
+    /**
+     * Tool to add an item to the user's shopping cart.
+     */
     tool({
       name: 'addToCart',
       description: "Adds an item to the user's shopping cart.",
@@ -123,6 +134,9 @@ export const salesAgent = new RealtimeAgent({
       execute: async (_input: any) => ({ success: true }),
     }),
 
+    /**
+     * Tool to initiate a checkout process with the user's selected items.
+     */
     tool({
       name: 'checkout',
       description:
@@ -141,7 +155,7 @@ export const salesAgent = new RealtimeAgent({
             type: 'string',
             description:
               "User's phone number used for verification. Formatted like '(111) 222-3333'",
-            pattern: '^\\(\\d{3}\\) \\d{3}-\\d{4}$',
+            pattern: '^\\(\\d{3}\\)\\s\\d{3}-\\d{4}$',
           },
         },
         required: ['item_ids', 'phone_number'],

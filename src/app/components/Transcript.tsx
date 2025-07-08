@@ -8,14 +8,27 @@ import { useTranscript } from '@/app/contexts/TranscriptContext';
 import type { TranscriptItem } from '@/app/types';
 import { GuardrailChip } from './GuardrailChip';
 
+/**
+ * Props for the Transcript component.
+ */
 export interface TranscriptProps {
+  /** The current text input by the user. */
   userText: string;
+  /** Callback to update the user's text input. */
   setUserText: (val: string) => void;
+  /** Callback to send the current message. */
   onSendMessage: () => void;
+  /** Indicates whether messages can currently be sent. */
   canSend: boolean;
+  /** Callback to trigger the audio recording download. */
   downloadRecording: () => void;
 }
 
+/**
+ * Displays the conversation transcript, including user messages, agent responses,
+ * tool calls, and guardrail indicators. Provides input for sending messages
+ * and options for copying the transcript or downloading audio.
+ */
 function Transcript({
   userText,
   setUserText,
@@ -29,12 +42,18 @@ function Transcript({
   const [justCopied, setJustCopied] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
+  /**
+   * Scrolls the transcript to the bottom.
+   */
   function scrollToBottom() {
     if (transcriptRef.current) {
       transcriptRef.current.scrollTop = transcriptRef.current.scrollHeight;
     }
   }
 
+  /**
+   * Effect to scroll to the bottom when new messages or updates occur.
+   */
   useEffect(() => {
     const hasNewMessage = transcriptItems.length > prevLogs.length;
     const hasUpdatedMessage = transcriptItems.some((newItem, index) => {
@@ -52,13 +71,18 @@ function Transcript({
     setPrevLogs(transcriptItems);
   }, [transcriptItems]);
 
-  // Autofocus on text box input on load
+  /**
+   * Effect to autofocus on the text input box when messages can be sent.
+   */
   useEffect(() => {
     if (canSend && inputRef.current) {
       inputRef.current.focus();
     }
   }, [canSend]);
 
+  /**
+   * Handles copying the transcript content to the clipboard.
+   */
   const handleCopyTranscript = async () => {
     if (!transcriptRef.current) return;
     try {

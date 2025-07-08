@@ -1,6 +1,11 @@
 import { useRef } from 'react';
 import { convertWebMBlobToWav } from '../lib/audioUtils';
 
+/**
+ * A React hook for recording and downloading audio from a WebRTC session.
+ * It merges remote audio stream with local microphone input and allows downloading
+ * the combined audio as a WAV file.
+ */
 function useAudioDownload() {
   // Ref to store the MediaRecorder instance.
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -9,7 +14,8 @@ function useAudioDownload() {
 
   /**
    * Starts recording by combining the provided remote stream with
-   * the microphone audio.
+   * the microphone audio. If microphone access is denied, it falls back
+   * to recording only the remote stream.
    * @param remoteStream - The remote MediaStream (e.g., from the audio element).
    */
   const startRecording = async (remoteStream: MediaStream) => {
@@ -65,7 +71,8 @@ function useAudioDownload() {
   };
 
   /**
-   * Stops the MediaRecorder, if active.
+   * Stops the MediaRecorder, if active. This will trigger the `ondataavailable` event
+   * one last time with any remaining data.
    */
   const stopRecording = () => {
     if (mediaRecorderRef.current) {
@@ -77,8 +84,8 @@ function useAudioDownload() {
   };
 
   /**
-   * Initiates download of the recording after converting from WebM to WAV.
-   * If the recorder is still active, we request its latest data before downloading.
+   * Initiates the download of the recorded audio. It combines all recorded chunks,
+   * converts the WebM audio to WAV format, and then triggers a file download.
    */
   const downloadRecording = async () => {
     // If recording is still active, request the latest chunk.

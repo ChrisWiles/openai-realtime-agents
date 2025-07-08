@@ -10,25 +10,60 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import type { LoggedEvent } from '@/app/types';
 
+/**
+ * Defines the shape of the value provided by the EventContext.
+ */
 type EventContextValue = {
+  /** The array of logged events. */
   loggedEvents: LoggedEvent[];
+  /**
+   * Logs a client-side event.
+   * @param eventObj The event object to log.
+   * @param eventNameSuffix An optional suffix to append to the event name.
+   */
   logClientEvent: (
     eventObj: Record<string, any>,
     eventNameSuffix?: string
   ) => void;
+  /**
+   * Logs a server-side event.
+   * @param eventObj The event object to log.
+   * @param eventNameSuffix An optional suffix to append to the event name.
+   */
   logServerEvent: (
     eventObj: Record<string, any>,
     eventNameSuffix?: string
   ) => void;
+  /**
+   * Logs a history item as an event.
+   * @param item The history item to log.
+   */
   logHistoryItem: (item: any) => void;
+  /**
+   * Toggles the expanded state of a logged event.
+   * @param id The ID of the event to toggle.
+   */
   toggleExpand: (id: number | string) => void;
 };
 
+/**
+ * React Context for managing application events and logs.
+ */
 const EventContext = createContext<EventContextValue | undefined>(undefined);
 
+/**
+ * Provides the EventContext to its children.
+ * Manages the state and logic for logging and displaying various application events.
+ */
 export const EventProvider: FC<PropsWithChildren> = ({ children }) => {
   const [loggedEvents, setLoggedEvents] = useState<LoggedEvent[]>([]);
 
+  /**
+   * Adds a new event to the logged events list.
+   * @param direction The direction of the event ('client' or 'server').
+   * @param eventName The name of the event.
+   * @param eventData The data associated with the event.
+   */
   function addLoggedEvent(
     direction: 'client' | 'server',
     eventName: string,
@@ -48,6 +83,11 @@ export const EventProvider: FC<PropsWithChildren> = ({ children }) => {
     ]);
   }
 
+  /**
+   * Logs a client-side event.
+   * @param eventObj The event object to log.
+   * @param eventNameSuffix An optional suffix to append to the event name.
+   */
   const logClientEvent: EventContextValue['logClientEvent'] = (
     eventObj,
     eventNameSuffix = ''
@@ -56,6 +96,11 @@ export const EventProvider: FC<PropsWithChildren> = ({ children }) => {
     addLoggedEvent('client', name, eventObj);
   };
 
+  /**
+   * Logs a server-side event.
+   * @param eventObj The event object to log.
+   * @param eventNameSuffix An optional suffix to append to the event name.
+   */
   const logServerEvent: EventContextValue['logServerEvent'] = (
     eventObj,
     eventNameSuffix = ''
@@ -64,6 +109,10 @@ export const EventProvider: FC<PropsWithChildren> = ({ children }) => {
     addLoggedEvent('server', name, eventObj);
   };
 
+  /**
+   * Logs a history item as an event.
+   * @param item The history item to log.
+   */
   const logHistoryItem: EventContextValue['logHistoryItem'] = (item) => {
     let eventName = item.type;
     if (item.type === 'message') {
@@ -75,6 +124,10 @@ export const EventProvider: FC<PropsWithChildren> = ({ children }) => {
     addLoggedEvent('server', eventName, item);
   };
 
+  /**
+   * Toggles the expanded state of a logged event by its ID.
+   * @param id The ID of the event to toggle.
+   */
   const toggleExpand: EventContextValue['toggleExpand'] = (id) => {
     setLoggedEvents((prev) =>
       prev.map((log) => {
@@ -101,6 +154,12 @@ export const EventProvider: FC<PropsWithChildren> = ({ children }) => {
   );
 };
 
+/**
+ * Custom hook to consume the EventContext.
+ * Throws an error if used outside of an EventProvider.
+ * @returns The context value containing logged events and functions to manipulate them.
+ * @throws Error if not used within an EventProvider.
+ */
 export function useEvent() {
   const context = useContext(EventContext);
   if (!context) {

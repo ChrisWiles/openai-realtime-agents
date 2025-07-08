@@ -17,7 +17,7 @@ export default function HowToUsePage() {
             ← Back to App
           </Link>
           <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-            How to Use OpenAI Realtime Agents
+            How to Use Realtime Voice Agents
           </h1>
           <p className="text-xl text-gray-900 dark:text-gray-100">
             A comprehensive guide to using this advanced voice agent
@@ -31,19 +31,20 @@ export default function HowToUsePage() {
               What is this?
             </h2>
             <p className="text-gray-900 dark:text-gray-100 mb-4">
-              This is a demonstration of advanced voice agent patterns using the
-              OpenAI Realtime API and OpenAI Agents SDK. It showcases two main
-              architectural patterns for building intelligent voice assistants:
+              This is a demo showcasing advanced voice agent patterns. It uses a
+              Realtime API and an Agents SDK to build intelligent voice
+              assistants. We highlight two main ways to design these systems:
             </p>
             <ul className="list-disc list-inside space-y-2 text-gray-900 dark:text-gray-100">
               <li>
-                <strong>Chat-Supervisor Pattern:</strong> A realtime chat agent
-                handles basic interactions while deferring complex tasks to a
-                more intelligent supervisor model
+                <strong>Chat-Supervisor Pattern:</strong> A quick, responsive
+                agent handles simple chats, passing tougher questions to a
+                smarter "supervisor" agent.
               </li>
               <li>
-                <strong>Sequential Handoff Pattern:</strong> Specialized agents
-                transfer users between them based on specific intents
+                <strong>Sequential Handoff Pattern:</strong> Different
+                specialized agents work together, handing off the conversation
+                as needed to handle specific user requests.
               </li>
             </ul>
           </section>
@@ -55,47 +56,46 @@ export default function HowToUsePage() {
             <div className="space-y-4">
               <div>
                 <h3 className="text-lg font-medium mb-2">
-                  1. Select a Scenario
+                  1. Choose a Scenario
                 </h3>
                 <p className="text-gray-900 dark:text-gray-100">
-                  Use the "Scenario" dropdown in the top toolbar to choose
-                  between different agent configurations:
+                  Pick a scenario from the "Scenario" dropdown in the top
+                  toolbar to try out different agent setups:
                 </p>
                 <ul className="list-disc list-inside ml-4 space-y-1 text-gray-900 dark:text-gray-100">
                   <li>
-                    <strong>chatSupervisor:</strong> Basic chat with intelligent
-                    supervisor for complex tasks
+                    <strong>chatSupervisor:</strong> A basic chat agent backed
+                    by a smart supervisor for tougher questions.
                   </li>
                   <li>
-                    <strong>customerServiceRetail:</strong> Multi-agent customer
-                    service flow
+                    <strong>customerServiceRetail:</strong> A multi-agent system
+                    for customer service, handling various retail inquiries.
                   </li>
                   <li>
-                    <strong>simpleHandoff:</strong> Simple demonstration of
-                    agent handoffs
+                    <strong>simpleHandoff:</strong> A straightforward example of
+                    how agents can pass conversations to each other.
                   </li>
                   <li>
-                    <strong>materialOrdering:</strong> Construction material
-                    ordering assistant
+                    <strong>materialOrdering:</strong> An assistant for ordering
+                    construction materials.
                   </li>
                   <li>
-                    <strong>projectEstimation:</strong> Project estimation and
-                    planning assistant
+                    <strong>projectEstimation:</strong> An agent that helps with
+                    project planning and estimates.
                   </li>
                   <li>
-                    <strong>vendorManagement:</strong> Vendor management and
-                    procurement assistant
+                    <strong>vendorManagement:</strong> An assistant for managing
+                    vendors and procurement.
                   </li>
                 </ul>
               </div>
               <div>
                 <h3 className="text-lg font-medium mb-2">
-                  2. Connect to Start
+                  2. Connect and Begin
                 </h3>
                 <p className="text-gray-900 dark:text-gray-100">
-                  Click the "Connect" button in the bottom toolbar to establish
-                  a connection with the OpenAI Realtime API. The button will
-                  turn green when connected.
+                  Hit the "Connect" button in the bottom toolbar. It'll turn
+                  green once you're linked up to the Realtime API.
                 </p>
               </div>
             </div>
@@ -167,7 +167,7 @@ export default function HowToUsePage() {
               <div>
                 <h3 className="text-lg font-medium mb-2">Voice Selection</h3>
                 <p className="text-gray-900 dark:text-gray-100 mb-2">
-                  Choose from 8 different OpenAI voices in the bottom toolbar:
+                  Choose from 8 different voices in the bottom toolbar:
                 </p>
                 <ul className="list-disc list-inside ml-4 space-y-1 text-gray-900 dark:text-gray-100">
                   <li>
@@ -294,7 +294,7 @@ export default function HowToUsePage() {
                 <h3 className="text-lg font-medium mb-2">Connection Issues</h3>
                 <ul className="list-disc list-inside ml-4 space-y-1 text-gray-900 dark:text-gray-100">
                   <li>Ensure you have a stable internet connection</li>
-                  <li>Check that your OpenAI API key is properly configured</li>
+                  <li>Check that your API key is properly configured</li>
                   <li>Try refreshing the page and reconnecting</li>
                 </ul>
               </div>
@@ -316,29 +316,29 @@ export default function HowToUsePage() {
               Technical Architecture
             </h2>
             <p className="text-gray-900 dark:text-gray-100 mb-4">
-              This application demonstrates advanced patterns for building voice
-              agents:
+              This application is built to showcase advanced voice agent
+              patterns, leveraging these core technologies:
             </p>
             <ul className="list-disc list-inside space-y-2 text-gray-900 dark:text-gray-100">
               <li>
-                <strong>OpenAI Realtime API:</strong> Enables low-latency voice
-                interactions
+                <strong>Realtime API:</strong> Powers low-latency voice
+                interactions.
               </li>
               <li>
-                <strong>OpenAI Agents SDK:</strong> Provides tools for agent
-                orchestration and management
+                <strong>Agents SDK:</strong> Provides the framework for agent
+                orchestration and management.
               </li>
               <li>
-                <strong>Next.js:</strong> Full-stack React framework for the web
-                interface
+                <strong>Next.js:</strong> A full-stack React framework for the
+                web interface.
               </li>
               <li>
-                <strong>WebRTC:</strong> Real-time audio streaming between
-                browser and API
+                <strong>WebRTC:</strong> Handles real-time audio streaming
+                between your browser and the API.
               </li>
               <li>
-                <strong>TypeScript:</strong> Type-safe development with modern
-                JavaScript features
+                <strong>TypeScript:</strong> Ensures type-safe development with
+                modern JavaScript features.
               </li>
             </ul>
           </section>

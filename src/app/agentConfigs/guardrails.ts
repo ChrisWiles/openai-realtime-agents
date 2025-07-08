@@ -1,10 +1,15 @@
 import { zodTextFormat } from 'openai/helpers/zod';
 import { type GuardrailOutput, GuardrailOutputZod } from '@/app/types';
 
-// Validator that calls the /api/responses endpoint to
-// validates the realtime output according to moderation policies.
-// This will prevent the realtime model from responding in undesired ways
-// By sending it a corrective message and having it redirect the conversation.
+/**
+ * Validates the realtime output according to moderation policies by calling the /api/responses endpoint.
+ * This function prevents the realtime model from responding in undesired ways by sending it a corrective message.
+ *
+ * @param message The message to be classified.
+ * @param companyName The name of the company, used for context in classification. Defaults to 'newTelco'.
+ * @returns A Promise that resolves to a GuardrailOutput indicating the moderation result.
+ * @throws {Error} If there's an error with the API response or parsing the guardrail output.
+ */
 export async function runGuardrailClassifier(
   message: string,
   companyName: string = 'newTelco'
@@ -68,18 +73,34 @@ export async function runGuardrailClassifier(
   }
 }
 
+/**
+ * Represents the result of a realtime output guardrail check.
+ */
 export interface RealtimeOutputGuardrailResult {
+  /** Indicates whether a tripwire was triggered. */
   tripwireTriggered: boolean;
+  /** Additional information about the output, typically the GuardrailOutput. */
   outputInfo: any;
 }
 
+/**
+ * Arguments for a realtime output guardrail execution.
+ */
 export interface RealtimeOutputGuardrailArgs {
+  /** The agent's output message to be checked. */
   agentOutput: string;
+  /** The agent object (optional). */
   agent?: any;
+  /** Additional context (optional). */
   context?: any;
 }
 
-// Creates a guardrail bound to a specific company name for output moderation purposes.
+/**
+ * Creates a moderation guardrail bound to a specific company name for output moderation purposes.
+ *
+ * @param companyName The name of the company to bind the guardrail to.
+ * @returns An object representing the moderation guardrail with an `execute` method.
+ */
 export function createModerationGuardrail(companyName: string) {
   return {
     name: 'moderation_guardrail',

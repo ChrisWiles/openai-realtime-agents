@@ -1,6 +1,9 @@
 import { RealtimeAgent, tool } from '@openai/agents/realtime';
 
-// Material catalog with required fields for validation
+/**
+ * Defines a catalog of materials with their required and optional fields, and validation rules.
+ * This catalog is used by the `intelligentMaterialOrderingAgent` to validate material requests.
+ */
 const MATERIAL_CATALOG = {
   pvc_pipe: {
     name: 'PVC Pipe',
@@ -226,7 +229,10 @@ const MATERIAL_CATALOG = {
   },
 };
 
-// Current cart state (in a real system, this would be stored in a database)
+/**
+ * Represents the current state of the shopping cart.
+ * In a real system, this would typically be stored in a database.
+ */
 let CURRENT_CART: Array<{
   id: string;
   material_type: string;
@@ -236,6 +242,11 @@ let CURRENT_CART: Array<{
   quantity?: number;
 }> = [];
 
+/**
+ * Defines the intelligent material ordering agent for Kojo Technologies.
+ * This agent is designed to be concise and efficient, parsing material requests,
+ * identifying missing specifications, managing the cart, and submitting orders.
+ */
 export const intelligentMaterialOrderingAgent = new RealtimeAgent({
   name: 'intelligentMaterialOrdering',
   voice: 'coral',
@@ -292,6 +303,10 @@ IMPORTANT: Keep responses under 20 words when possible. Be helpful but extremely
 `,
 
   tools: [
+    /**
+     * Tool to parse a natural language material request and identify the material type
+     * and any provided specifications.
+     */
     tool({
       name: 'parseMaterialRequest',
       description:
@@ -404,6 +419,9 @@ IMPORTANT: Keep responses under 20 words when possible. Be helpful but extremely
       },
     }),
 
+    /**
+     * Tool to validate material specifications against catalog requirements and identify missing fields.
+     */
     tool({
       name: 'validateMaterialSpecs',
       description:
@@ -476,6 +494,9 @@ IMPORTANT: Keep responses under 20 words when possible. Be helpful but extremely
       },
     }),
 
+    /**
+     * Tool to add a validated material item to the cart.
+     */
     tool({
       name: 'addToCart',
       description: 'Add a validated material item to the cart',
@@ -536,6 +557,9 @@ IMPORTANT: Keep responses under 20 words when possible. Be helpful but extremely
       },
     }),
 
+    /**
+     * Tool to display current cart contents.
+     */
     tool({
       name: 'viewCart',
       description: 'Display current cart contents',
@@ -572,6 +596,9 @@ IMPORTANT: Keep responses under 20 words when possible. Be helpful but extremely
       },
     }),
 
+    /**
+     * Tool to remove an item from the cart.
+     */
     tool({
       name: 'removeFromCart',
       description: 'Remove an item from the cart',
@@ -600,6 +627,9 @@ IMPORTANT: Keep responses under 20 words when possible. Be helpful but extremely
       },
     }),
 
+    /**
+     * Tool to submit the complete order for processing.
+     */
     tool({
       name: 'submitOrder',
       description: 'Submit the complete order for processing',
@@ -682,8 +712,14 @@ IMPORTANT: Keep responses under 20 words when possible. Be helpful but extremely
   handoffs: [], // No handoffs for this specialized agent
 });
 
+/**
+ * Defines the intelligent material ordering scenario.
+ */
 export const intelligentMaterialOrderingScenario = [
   intelligentMaterialOrderingAgent,
 ];
 
+/**
+ * The company name associated with the intelligent material ordering agent.
+ */
 export const intelligentMaterialOrderingCompanyName = 'Kojo Technologies';

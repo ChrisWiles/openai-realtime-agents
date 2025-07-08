@@ -1,5 +1,9 @@
 import { RealtimeAgent, tool } from '@openai/agents/realtime';
 
+/**
+ * Represents the authentication agent for customer service retail.
+ * This agent greets contractors, handles onboarding verification, and routes them to the correct procurement specialist.
+ */
 export const authenticationAgent = new RealtimeAgent({
   name: 'contractorOnboarding',
   voice: 'sage',
@@ -176,7 +180,7 @@ You’re always ready with a friendly follow-up question or a quick tip gleaned 
       "ALWAYS read the following disclosure VERBATIM, IN FULL, once all verification steps are complete:",
       "",
       "Disclosure (verbatim):",
-      "“At Kojo Technologies, we are committed to delivering exceptional value and a top-quality experience to all of our valued customers. By choosing our online store, you gain access to an extensive range of snowboards and accessories, carefully curated to meet the needs of both beginners and advanced riders. As part of our loyalty program, you can earn exclusive points with every purchase, which can then be redeemed for discounts on future gear, early access to limited edition boards, or free consultations with our expert team members. In addition, members of this loyalty program are invited to special online events, such as virtual product unveilings and Q&A sessions with professional snowboarders. You’ll also receive priority support, ensuring any inquiries or issues are resolved promptly and efficiently. Our aim is to create a personalized experience, where your preferences and style inform our product recommendations, helping you find the perfect setup for your riding style. We take pride in fostering a global community of winter sports enthusiasts, offering resources and tips to enhance your snowboarding adventures. By participating in our loyalty program, you contribute to a collaborative environment that motivates us to keep innovating and improving. Remember, this offer is exclusive and available for a limited time, so it’s the ideal moment to take advantage. Would you like to sign up for our loyalty program?”",
+      "“At Kojo Technologies, we are committed to delivering exceptional value and a top-quality experience to all of our valued customers. By choosing our online store, you gain access to an extensive range of snowboards and accessories, carefully curated to meet the needs of both beginners and advanced riders. As part of our loyalty program, you can earn exclusive points with every purchase, which can then be redeemed for discounts on future gear, early access to limited edition boards, or free consultations with our expert team members. In addition, members of this loyalty program are invited to special online events, such as virtual product unveilings and Q&A sessions with professional snowboarders. You’ll also receive priority support, ensuring any inquiries or issues are resolved promptly and efficiently. Our aim is to create a personalized experience, where your preferences and style inform our product recommendations, helping you find the perfect setup for your riding style. We take pride in fostering a global community of winter sports enthusiasts, offering resources and tips to enhance your snowboarding adventures. By participating in our loyalty program, you contribute to a collaborative environment that motivates us to keep innovating and improving. Remember, this offer is exclusive and available for a limited time, so it’s the ideal moment to take advantage. Would you like to sign up for your loyalty program?”",
       "",
       "End of disclosure.",
       "NEVER summarize or shorten this disclosure; ALWAYS say it in its entirety, exactly as written above, at a faster rate than normal to get through it in a timely manner.",
@@ -211,6 +215,10 @@ You’re always ready with a friendly follow-up question or a quick tip gleaned 
 `,
 
   tools: [
+    /**
+     * Tool to authenticate user information using phone number, last 4 digits of SSN/credit card, and date of birth.
+     * This tool should be called after confirming all details with the user.
+     */
     tool({
       name: 'authenticate_user_information',
       description:
@@ -222,7 +230,7 @@ You’re always ready with a friendly follow-up question or a quick tip gleaned 
             type: 'string',
             description:
               "User's phone number used for verification. Formatted like '(111) 222-3333'",
-            pattern: '^\\(\\d{3}\\) \\d{3}-\\d{4}$',
+            pattern: '^\\(\\d{3}\\)\\s\\d{3}-\\d{4}$',
           },
           last_4_digits: {
             type: 'string',
@@ -253,6 +261,10 @@ You’re always ready with a friendly follow-up question or a quick tip gleaned 
         return { success: true };
       },
     }),
+    /**
+     * Tool to save or update an address for a given phone number.
+     * This tool should only be run after the user is authenticated and all address details are confirmed.
+     */
     tool({
       name: 'save_or_update_address',
       description:
@@ -295,6 +307,9 @@ You’re always ready with a friendly follow-up question or a quick tip gleaned 
         return { success: true };
       },
     }),
+    /**
+     * Tool to record a user's response to a promotional offer.
+     */
     tool({
       name: 'update_user_offer_response',
       description:
@@ -312,7 +327,6 @@ You’re always ready with a friendly follow-up question or a quick tip gleaned 
           },
           user_response: {
             type: 'string',
-            description: "The user's response to the promotional offer",
             enum: ['ACCEPTED', 'DECLINED', 'REMIND_LATER'],
           },
         },

@@ -36,7 +36,10 @@ import Events from './components/Events';
 import Transcript from './components/Transcript';
 import { useRealtimeSession } from './hooks/useRealtimeSession';
 
-// Map used by connect logic for scenarios defined via the SDK.
+/**
+ * A map used by the connection logic for scenarios defined via the SDK.
+ * Each key represents a scenario, and its value is an array of RealtimeAgent instances.
+ */
 const sdkScenarioMap: Record<string, RealtimeAgent[]> = {
   simpleHandoff: simpleHandoffScenario,
   customerServiceRetail: customerServiceRetailScenario,
@@ -47,6 +50,10 @@ const sdkScenarioMap: Record<string, RealtimeAgent[]> = {
 import useAudioDownload from './hooks/useAudioDownload';
 import { useHandleSessionHistory } from './hooks/useHandleSessionHistory';
 
+/**
+ * The main application component for the Realtime API Agents Demo.
+ * Manages session status, agent configurations, and UI interactions.
+ */
 function App() {
   const searchParams = useSearchParams()!;
 
@@ -128,6 +135,11 @@ function App() {
   const { startRecording, stopRecording, downloadRecording } =
     useAudioDownload();
 
+  /**
+   * Sends a client event and logs it.
+   * @param eventObj The event object to send.
+   * @param eventNameSuffix An optional suffix for the event name in logs.
+   */
   const sendClientEvent = (eventObj: any, eventNameSuffix = '') => {
     try {
       sendEvent(eventObj);
@@ -139,6 +151,10 @@ function App() {
 
   useHandleSessionHistory();
 
+  /**
+   * Effect to initialize the selected agent configuration based on URL parameters.
+   * Redirects to a default agent config if none is specified or found.
+   */
   useEffect(() => {
     let finalAgentConfig = searchParams.get('agentConfig');
     if (!finalAgentConfig || !allAgentSets[finalAgentConfig]) {
@@ -156,12 +172,19 @@ function App() {
     setSelectedAgentConfigSet(agents);
   }, [searchParams]);
 
+  /**
+   * Effect to connect to the Realtime session when an agent is selected and not already connected.
+   */
   useEffect(() => {
     if (selectedAgentName && sessionStatus === 'DISCONNECTED') {
       connectToRealtime();
     }
   }, [selectedAgentName]);
 
+  /**
+   * Effect to update the session and add a transcript breadcrumb when the session is connected
+   * and an agent configuration is selected.
+   */
   useEffect(() => {
     if (
       sessionStatus === 'CONNECTED' &&
@@ -178,12 +201,19 @@ function App() {
     }
   }, [selectedAgentConfigSet, selectedAgentName, sessionStatus]);
 
+  /**
+   * Effect to update the session when push-to-talk (PTT) status changes.
+   */
   useEffect(() => {
     if (sessionStatus === 'CONNECTED') {
       updateSession();
     }
   }, [isPTTActive]);
 
+  /**
+   * Fetches an ephemeral key from the API for session authentication.
+   * @returns A Promise that resolves to the ephemeral key string, or null if an error occurs.
+   */
   const fetchEphemeralKey = async (): Promise<string | null> => {
     logClientEvent({ url: '/session' }, 'fetch_session_token_request');
     const tokenResponse = await fetch('/api/session');
@@ -200,6 +230,9 @@ function App() {
     return data.client_secret.value;
   };
 
+  /**
+   * Connects to the Realtime session using the selected agent configuration.
+   */
   const connectToRealtime = async () => {
     const agentSetKey = searchParams.get('agentConfig') || 'default';
     if (sdkScenarioMap[agentSetKey]) {
@@ -246,12 +279,19 @@ function App() {
     }
   };
 
+  /**
+   * Disconnects from the Realtime session.
+   */
   const disconnectFromRealtime = () => {
     disconnect();
     setSessionStatus('DISCONNECTED');
     setIsPTTUserSpeaking(false);
   };
 
+  /**
+   * Sends a simulated user message to the session.
+   * @param text The text message to send.
+   */
   const sendSimulatedUserMessage = (text: string) => {
     const id = uuidv4().slice(0, 32);
     addTranscriptMessage(id, 'user', text, true);
@@ -271,6 +311,10 @@ function App() {
     );
   };
 
+  /**
+   * Updates the session configuration, particularly for turn detection (VAD).
+   * @param shouldTriggerResponse If true, sends an initial 'hi' message to trigger an agent response.
+   */
   const updateSession = (shouldTriggerResponse: boolean = false) => {
     // Reflect Push-to-Talk UI state by (de)activating server VAD on the
     // backend. The Realtime SDK supports live session updates via the
@@ -299,6 +343,9 @@ function App() {
     return;
   };
 
+  /**
+   * Handles sending a text message from the user input field.
+   */
   const handleSendTextMessage = () => {
     if (!userText.trim()) return;
     interrupt();
@@ -312,6 +359,10 @@ function App() {
     setUserText('');
   };
 
+  /**
+   * Handles the button down event for push-to-talk (PTT).
+   * Clears the audio buffer and sets the PTT user speaking state.
+   */
   const handleTalkButtonDown = () => {
     if (sessionStatus !== 'CONNECTED') return;
     interrupt();
@@ -322,6 +373,10 @@ function App() {
     // No placeholder; we'll rely on server transcript once ready.
   };
 
+  /**
+   * Handles the button up event for push-to-talk (PTT).
+   * Commits the audio buffer and triggers a response.
+   */
   const handleTalkButtonUp = () => {
     if (sessionStatus !== 'CONNECTED' || !isPTTUserSpeaking) return;
 
@@ -330,6 +385,9 @@ function App() {
     sendClientEvent({ type: 'response.create' }, 'trigger response PTT');
   };
 
+  /**
+   * Toggles the connection status (connects or disconnects).
+   */
   const onToggleConnection = () => {
     if (sessionStatus === 'CONNECTED' || sessionStatus === 'CONNECTING') {
       disconnectFromRealtime();
@@ -339,6 +397,11 @@ function App() {
     }
   };
 
+  /**
+   * Handles changes in the selected agent configuration scenario.
+   * Reloads the page with the new agent config URL parameter.
+   * @param e The change event from the select element.
+   */
   const handleAgentChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newAgentConfig = e.target.value;
     const url = new URL(window.location.toString());
@@ -346,6 +409,11 @@ function App() {
     window.location.replace(url.toString());
   };
 
+  /**
+   * Handles changes in the selected agent within the current scenario.
+   * Disconnects and reconnects the session with the newly selected agent as the root.
+   * @param e The change event from the select element.
+   */
   const handleSelectedAgentChange = (
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
@@ -357,13 +425,22 @@ function App() {
     // connectToRealtime will be triggered by effect watching selectedAgentName
   };
 
-  // Because we need a new connection, refresh the page when codec changes
+  /**
+   * Handles changes in the audio codec.
+   * Reloads the page with the new codec URL parameter.
+   * @param newCodec The new codec string.
+   */
   const handleCodecChange = (newCodec: string) => {
     const url = new URL(window.location.toString());
     url.searchParams.set('codec', newCodec);
     window.location.replace(url.toString());
   };
 
+  /**
+   * Handles changes in the agent's voice.
+   * Updates local storage and reconnects the session if currently connected.
+   * @param newVoice The new voice string.
+   */
   const handleVoiceChange = (newVoice: string) => {
     setVoice(newVoice);
     localStorage.setItem('voice', newVoice);
@@ -377,6 +454,9 @@ function App() {
     }
   };
 
+  /**
+   * Effect to load stored UI preferences from localStorage on component mount.
+   */
   useEffect(() => {
     const storedPushToTalkUI = localStorage.getItem('pushToTalkUI');
     if (storedPushToTalkUI) {
@@ -398,14 +478,23 @@ function App() {
     }
   }, []);
 
+  /**
+   * Effect to save push-to-talk (PTT) UI state to localStorage.
+   */
   useEffect(() => {
     localStorage.setItem('pushToTalkUI', isPTTActive.toString());
   }, [isPTTActive]);
 
+  /**
+   * Effect to save events pane expanded state to localStorage.
+   */
   useEffect(() => {
     localStorage.setItem('logsExpanded', isEventsPaneExpanded.toString());
   }, [isEventsPaneExpanded]);
 
+  /**
+   * Effect to save audio playback enabled state to localStorage.
+   */
   useEffect(() => {
     localStorage.setItem(
       'audioPlaybackEnabled',
@@ -413,6 +502,10 @@ function App() {
     );
   }, [isAudioPlaybackEnabled]);
 
+  /**
+   * Effect to manage audio element muting and server-side audio stream mute
+   * based on `isAudioPlaybackEnabled` state.
+   */
   useEffect(() => {
     if (audioElementRef.current) {
       if (isAudioPlaybackEnabled) {
@@ -436,8 +529,10 @@ function App() {
     }
   }, [isAudioPlaybackEnabled]);
 
-  // Ensure mute state is propagated to transport right after we connect or
-  // whenever the SDK client reference becomes available.
+  /**
+   * Effect to ensure mute state is propagated to the transport right after connection
+   * or when the SDK client reference becomes available.
+   */
   useEffect(() => {
     if (sessionStatus === 'CONNECTED') {
       try {
@@ -448,6 +543,9 @@ function App() {
     }
   }, [sessionStatus, isAudioPlaybackEnabled]);
 
+  /**
+   * Effect to start and stop audio recording based on session connection status.
+   */
   useEffect(() => {
     if (sessionStatus === 'CONNECTED' && audioElementRef.current?.srcObject) {
       // The remote audio stream from the audio element.

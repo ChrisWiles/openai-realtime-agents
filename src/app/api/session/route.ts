@@ -1,5 +1,11 @@
 import { NextResponse } from 'next/server';
 
+/**
+ * Handles GET requests to create a new Realtime API session.
+ * This function makes a POST request to the OpenAI Realtime API to obtain an ephemeral session token.
+ *
+ * @returns A NextResponse object containing the session data or an error message.
+ */
 export async function GET() {
   try {
     const response = await fetch(

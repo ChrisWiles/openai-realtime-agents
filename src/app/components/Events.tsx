@@ -4,22 +4,39 @@ import { useEffect, useRef, useState } from 'react';
 import { useEvent } from '@/app/contexts/EventContext';
 import type { LoggedEvent } from '@/app/types';
 
+/**
+ * Props for the Events component.
+ */
 export interface EventsProps {
+  /** Determines if the events pane is expanded or collapsed. */
   isExpanded: boolean;
 }
 
+/**
+ * Displays a real-time log of client and server events.
+ * Provides a visual representation of event flow and detailed event data.
+ */
 function Events({ isExpanded }: EventsProps) {
   const [prevEventLogs, setPrevEventLogs] = useState<LoggedEvent[]>([]);
   const eventLogsContainerRef = useRef<HTMLDivElement | null>(null);
 
   const { loggedEvents, toggleExpand } = useEvent();
 
+  /**
+   * Returns an arrow symbol and color based on the event direction.
+   * @param direction The direction of the event ('client' or 'server').
+   * @returns An object containing the symbol and its color.
+   */
   const getDirectionArrow = (direction: string) => {
     if (direction === 'client') return { symbol: '▲', color: '#7f5af0' };
     if (direction === 'server') return { symbol: '▼', color: '#2cb67d' };
     return { symbol: '•', color: '#555' };
   };
 
+  /**
+   * Effect to scroll to the bottom of the event log when new events are added
+   * and the pane is expanded.
+   */
   useEffect(() => {
     const hasNewEvent = loggedEvents.length > prevEventLogs.length;
 

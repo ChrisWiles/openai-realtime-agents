@@ -1,5 +1,10 @@
 import { RealtimeAgent } from '@openai/agents/realtime';
 
+/**
+ * Represents a simulated human agent for customer service.
+ * This agent is a placeholder for more advanced human-like assistance and should be routed to
+ * if the user is upset, frustrated, or explicitly asks for a human agent.
+ */
 export const simulatedHumanAgent = new RealtimeAgent({
   name: 'simulatedHuman',
   voice: 'sage',

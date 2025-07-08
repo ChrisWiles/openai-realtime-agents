@@ -6,6 +6,10 @@ import {
   exampleStoreLocations,
 } from './sampleData';
 
+/**
+ * Instructions for the supervisor agent. This agent provides real-time guidance to a junior agent
+ * chatting directly with the customer. It can provide direct answers or call tools.
+ */
 export const supervisorAgentInstructions = `You are an expert customer service supervisor agent, tasked with providing real-time guidance to a more junior agent that's chatting directly with the customer. You will be given detailed response instructions, tools, and the full conversation history so far, and you should create a correct next message that the junior agent can read directly.
 
 # Instructions
@@ -90,6 +94,9 @@ Yes, our vendor onboarding typically takes 3-5 business days and requires insura
 I'm sorry, but I'm not able to process purchase orders directly. Would you like me to connect you with a human representative, or help you find vendors in your area for material sourcing?
 `;
 
+/**
+ * Defines the tools available to the supervisor agent.
+ */
 export const supervisorAgentTools = [
   {
     type: 'function',
@@ -151,6 +158,11 @@ export const supervisorAgentTools = [
   },
 ];
 
+/**
+ * Fetches a response message from the /api/responses endpoint.
+ * @param body The request body for the responses API.
+ * @returns A Promise that resolves to the completion response or an error object.
+ */
 async function fetchResponsesMessage(body: any) {
   const response = await fetch('/api/responses', {
     method: 'POST',
@@ -170,6 +182,11 @@ async function fetchResponsesMessage(body: any) {
   return completion;
 }
 
+/**
+ * Retrieves a mock tool response based on the function name.
+ * @param fName The name of the function to get a response for.
+ * @returns A mock response object.
+ */
 function getToolResponse(fName: string) {
   switch (fName) {
     case 'getContractorAccountInfo':
@@ -186,6 +203,10 @@ function getToolResponse(fName: string) {
 /**
  * Iteratively handles function calls returned by the Responses API until the
  * supervisor produces a final textual answer. Returns that answer as a string.
+ * @param body The request body being sent to the Responses API.
+ * @param response The current response from the Responses API.
+ * @param addBreadcrumb Optional function to add a breadcrumb to the transcript.
+ * @returns A Promise that resolves to the final textual answer from the assistant.
  */
 async function handleToolCalls(
   body: any,
@@ -264,6 +285,10 @@ async function handleToolCalls(
   }
 }
 
+/**
+ * Tool definition for getting the next response from the supervisor agent.
+ * This tool is used when the agent faces a non-trivial decision and needs guidance from a highly intelligent supervisor.
+ */
 export const getNextResponseFromSupervisor = tool({
   name: 'getNextResponseFromSupervisor',
   description:

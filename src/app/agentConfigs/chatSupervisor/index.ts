@@ -1,6 +1,10 @@
 import { RealtimeAgent } from '@openai/agents/realtime';
 import { getNextResponseFromSupervisor } from './supervisorAgent';
 
+/**
+ * Represents the chat agent in the chat-supervisor pattern.
+ * This agent handles basic tasks and defers complex tasks to a supervisor agent.
+ */
 export const chatAgent = new RealtimeAgent({
   name: 'chatAgent',
   voice: 'sage',
@@ -109,9 +113,14 @@ findVendorsByLocation:
   tools: [getNextResponseFromSupervisor],
 });
 
+/**
+ * Defines the chat supervisor scenario, including the chat agent.
+ */
 export const chatSupervisorScenario = [chatAgent];
 
-// Name of the company represented by this agent set. Used by guardrails
+/**
+ * The name of the company represented by this agent set in the chat supervisor scenario.
+ */
 export const chatSupervisorCompanyName = 'Kojo Technologies';
 
 export default chatSupervisorScenario;

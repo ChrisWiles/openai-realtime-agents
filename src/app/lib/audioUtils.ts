@@ -2,6 +2,10 @@
 
 /**
  * Writes a string into a DataView at the given offset.
+ *
+ * @param view The DataView to write to.
+ * @param offset The offset in the DataView to start writing.
+ * @param str The string to write.
  */
 export function writeString(view: DataView, offset: number, str: string) {
   for (let i = 0; i < str.length; i++) {
@@ -10,7 +14,11 @@ export function writeString(view: DataView, offset: number, str: string) {
 }
 
 /**
- * Converts a Float32Array to 16-bit PCM in a DataView.
+ * Converts a Float32Array of audio samples to 16-bit PCM and writes it into a DataView.
+ *
+ * @param output The DataView to write the PCM data to.
+ * @param offset The offset in the DataView to start writing.
+ * @param input The Float32Array containing the audio samples (values between -1 and 1).
  */
 export function floatTo16BitPCM(
   output: DataView,
@@ -24,7 +32,12 @@ export function floatTo16BitPCM(
 }
 
 /**
- * Encodes a Float32Array as a WAV file.
+ * Encodes a Float32Array of audio samples into a WAV file format (ArrayBuffer).
+ * The output WAV will be mono (channels are averaged if input is multi-channel) and 16-bit PCM.
+ *
+ * @param samples The Float32Array containing the audio samples.
+ * @param sampleRate The sample rate of the audio.
+ * @returns An ArrayBuffer representing the WAV file.
  */
 export function encodeWAV(
   samples: Float32Array,
@@ -66,7 +79,11 @@ export function encodeWAV(
 }
 
 /**
- * Converts a WebM audio blob to a WAV blob.
+ * Converts a WebM audio Blob to a WAV Blob.
+ * This function decodes the WebM audio, averages channels to mono, and then encodes it as a WAV file.
+ *
+ * @param blob The input WebM audio Blob.
+ * @returns A Promise that resolves to a new Blob containing the audio in WAV format.
  */
 export async function convertWebMBlobToWav(blob: Blob): Promise<Blob> {
   const arrayBuffer = await blob.arrayBuffer();

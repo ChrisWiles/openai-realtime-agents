@@ -1,3 +1,6 @@
+/**
+ * Example account information for a contractor.
+ */
 export const exampleAccountInfo = {
   accountId: 'KT-123456',
   companyName: 'Smith Electrical Contractors',
@@ -27,6 +30,9 @@ export const exampleAccountInfo = {
   },
 };
 
+/**
+ * Example policy documents for Kojo platform.
+ */
 export const examplePolicyDocs = [
   {
     id: 'ID-010',
@@ -58,6 +64,9 @@ export const examplePolicyDocs = [
   },
 ];
 
+/**
+ * Example store locations for vendors.
+ */
 export const exampleStoreLocations = [
   // NorCal Electrical Vendors
   {

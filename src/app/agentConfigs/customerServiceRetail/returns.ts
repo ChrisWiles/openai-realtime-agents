@@ -4,6 +4,10 @@ import {
   tool,
 } from '@openai/agents/realtime';
 
+/**
+ * Represents a Customer Service Agent specialized in order lookups, policy checks, and return initiations.
+ * This agent has a calm and approachable personality, with a subtle enthusiasm for snowboarding gear.
+ */
 export const returnsAgent = new RealtimeAgent({
   name: 'returns',
   voice: 'sage',
@@ -77,6 +81,10 @@ Speak at a medium pace—steady and clear. Brief pauses can be used for emphasis
 - Today's date is 12/26/2024
 `,
   tools: [
+    /**
+     * Tool to retrieve detailed order information using the user's phone number.
+     * Provides minimal information to remind the user of relevant order details.
+     */
     tool({
       name: 'lookupOrders',
       description:
@@ -144,6 +152,10 @@ Speak at a medium pace—steady and clear. Brief pauses can be used for emphasis
         };
       },
     }),
+    /**
+     * Tool to retrieve and present the store’s policies, including eligibility for returns.
+     * Does not describe policies directly to the user, but references them indirectly.
+     */
     tool({
       name: 'retrievePolicy',
       description:
@@ -205,6 +217,10 @@ We hope these policies give you confidence in our commitment to quality and cust
         };
       },
     }),
+    /**
+     * Tool to check the eligibility of a proposed action for a given order, providing approval or denial with reasons.
+     * This tool escalates the request to an experienced agent for determination.
+     */
     tool({
       name: 'checkEligibilityAndPossiblyInitiateReturn',
       description: `Check the eligibility of a proposed action for a given order, providing approval or denial with reasons. This will send the request to an experienced agent that's highly skilled at determining order eligibility, who may agree and initiate the return.

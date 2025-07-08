@@ -1,24 +1,46 @@
 import type React from 'react';
 import type { SessionStatus } from '@/app/types';
 
+/**
+ * Props for the BottomToolbar component.
+ */
 interface BottomToolbarProps {
+  /** The current status of the session (e.g., CONNECTED, DISCONNECTED). */
   sessionStatus: SessionStatus;
+  /** Callback function to toggle the connection status. */
   onToggleConnection: () => void;
+  /** Indicates if Push-to-Talk (PTT) mode is active. */
   isPTTActive: boolean;
+  /** Callback to set the PTT active state. */
   setIsPTTActive: (val: boolean) => void;
+  /** Indicates if the user is currently speaking in PTT mode. */
   isPTTUserSpeaking: boolean;
+  /** Callback function for when the talk button is pressed down. */
   handleTalkButtonDown: () => void;
+  /** Callback function for when the talk button is released. */
   handleTalkButtonUp: () => void;
+  /** Indicates if the events pane is expanded. */
   isEventsPaneExpanded: boolean;
+  /** Callback to set the events pane expanded state. */
   setIsEventsPaneExpanded: (val: boolean) => void;
+  /** Indicates if audio playback is enabled. */
   isAudioPlaybackEnabled: boolean;
+  /** Callback to set the audio playback enabled state. */
   setIsAudioPlaybackEnabled: (val: boolean) => void;
+  /** The currently selected audio codec. */
   codec: string;
+  /** Callback to handle changes in the audio codec. */
   onCodecChange: (newCodec: string) => void;
+  /** The currently selected voice. */
   voice: string;
+  /** Callback to handle changes in the voice. */
   onVoiceChange: (newVoice: string) => void;
 }
 
+/**
+ * A toolbar component displayed at the bottom of the application.
+ * It provides controls for session connection, push-to-talk, audio playback, event logs, codec selection, and voice selection.
+ */
 function BottomToolbar({
   sessionStatus,
   onToggleConnection,
@@ -39,22 +61,38 @@ function BottomToolbar({
   const isConnected = sessionStatus === 'CONNECTED';
   const isConnecting = sessionStatus === 'CONNECTING';
 
+  /**
+   * Handles changes in the selected audio codec.
+   * @param e The change event from the select element.
+   */
   const handleCodecChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newCodec = e.target.value;
     onCodecChange(newCodec);
   };
 
+  /**
+   * Handles changes in the selected voice.
+   * @param e The change event from the select element.
+   */
   const handleVoiceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newVoice = e.target.value;
     onVoiceChange(newVoice);
   };
 
+  /**
+   * Returns the appropriate label for the connection button based on the session status.
+   * @returns The button label string.
+   */
   function getConnectionButtonLabel() {
     if (isConnected) return 'Disconnect';
     if (isConnecting) return 'Connecting...';
     return 'Connect';
   }
 
+  /**
+   * Returns the CSS classes for the connection button based on the session status.
+   * @returns The CSS class string.
+   */
   function getConnectionButtonClasses() {
     const baseClasses =
       'text-white text-base px-6 py-2.5 w-36 rounded-xl h-full transition-all transform hover:scale-105 shadow-lg font-medium';
