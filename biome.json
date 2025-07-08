@@ -6,15 +6,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": [
-      "src/**/*.ts",
-      "src/**/*.tsx",
-      "*.ts",
-      "*.tsx",
-      "*.js",
-      "*.jsx",
-      "*.mjs"
-    ],
+    "includes": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "**/*.mjs"],
     "ignoreUnknown": true
   },
   "linter": {

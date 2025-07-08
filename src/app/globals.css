@@ -1,79 +1,100 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-:root {
-  --background: #fafafa;
-  --foreground: #171717;
-  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  --dark-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-  --light-gradient: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-  --glass-bg: rgba(255, 255, 255, 0.1);
-  --glass-border: rgba(255, 255, 255, 0.2);
+/*
+  1. Define CSS variables for light and dark mode.
+*/
+@layer base {
+	:root {
+		--background: #fafafa;
+		--foreground: #171717;
+		--primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		--secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+		--accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+		--dark-gradient: linear-gradient(
+			135deg,
+			#1a1a2e 0%,
+			#16213e 50%,
+			#0f3460 100%
+		);
+		--light-gradient: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+		--glass-bg: rgba(255, 255, 255, 0.1);
+		--glass-border: rgba(255, 255, 255, 0.2);
+	}
+
+	@media (prefers-color-scheme: dark) {
+		:root {
+			--background: #0a0a0a;
+			--foreground: #ededed;
+			--glass-bg: rgba(0, 0, 0, 0.3);
+			--glass-border: rgba(255, 255, 255, 0.1);
+		}
+	}
+
+	body {
+		color: var(--foreground);
+		background: var(--background);
+		font-family:
+			system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+			"Helvetica Neue", Arial, "Noto Sans", sans-serif;
+	}
+
+	/* Custom scrollbar */
+	::-webkit-scrollbar {
+		width: 8px;
+		height: 8px;
+	}
+
+	::-webkit-scrollbar-track {
+		background: rgba(0, 0, 0, 0.1);
+		border-radius: 4px;
+	}
+
+	::-webkit-scrollbar-thumb {
+		background: rgba(0, 0, 0, 0.3);
+		border-radius: 4px;
+	}
+
+	::-webkit-scrollbar-thumb:hover {
+		background: rgba(0, 0, 0, 0.5);
+	}
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    --glass-bg: rgba(0, 0, 0, 0.3);
-    --glass-border: rgba(255, 255, 255, 0.1);
-  }
+/*
+  2. Make Tailwind aware of these variables so you can use classes like `bg-background`.
+*/
+@theme {
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, "Noto Sans", sans-serif;
-}
+/*
+  3. Define custom utility classes.
+*/
+@layer utilities {
+	.glass {
+		background: var(--glass-bg);
+		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
+		border: 1px solid var(--glass-border);
+	}
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
+	.gradient-primary {
+		background: var(--primary-gradient);
+	}
 
-::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
-}
+	.gradient-secondary {
+		background: var(--secondary-gradient);
+	}
 
-::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 4px;
-}
+	.gradient-accent {
+		background: var(--accent-gradient);
+	}
 
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.5);
-}
+	.gradient-dark {
+		background: var(--dark-gradient);
+	}
 
-/* Glass morphism utility classes */
-.glass {
-  background: var(--glass-bg);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid var(--glass-border);
-}
-
-.gradient-primary {
-  background: var(--primary-gradient);
-}
-
-.gradient-secondary {
-  background: var(--secondary-gradient);
-}
-
-.gradient-accent {
-  background: var(--accent-gradient);
-}
-
-.gradient-dark {
-  background: var(--dark-gradient);
-}
-
-.gradient-light {
-  background: var(--light-gradient);
+	.gradient-light {
+		background: var(--light-gradient);
+	}
 }
